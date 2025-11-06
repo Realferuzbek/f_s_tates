@@ -4,6 +4,27 @@ import { useAuth } from './AuthContext.jsx';
 
 const CartContext = createContext();
 
+const buildLineKey = (productId, size, color) =>
+  [productId, (size ?? '').toLowerCase(), (color ?? '').toLowerCase()].join('::');
+
+const enhanceCartItem = (rawItem) => {
+  const product = rawItem.product ?? rawItem.productData;
+  const productId = rawItem.productId ?? product?.id;
+  return {
+    ...rawItem,
+    product,
+    productId,
+    lineKey: buildLineKey(productId, rawItem.selectedSize, rawItem.selectedColor)
+  };
+};
+
+const toPayload = (item) => ({
+  productId: item.productId ?? item.product?.id,
+  quantity: item.quantity,
+  selectedSize: item.selectedSize ?? null,
+  selectedColor: item.selectedColor ?? null
+});
+
 export function CartProvider({ children }) {
   const { token } = useAuth();
   const [items, setItems] = useState([]);
@@ -19,7 +40,9 @@ export function CartProvider({ children }) {
         const response = await apiClient.get('/cart', {
           headers: { Authorization: `Bearer ${authToken}` }
         });
-        setItems(response.data.items || []);
+        const fetchedItems =
+          response.data.items?.map((item) => enhanceCartItem({ ...item, product: item.product })) ?? [];
+        setItems(fetchedItems);
       } catch (error) {
         console.error('Failed to load cart', error);
       }
@@ -27,40 +50,61 @@ export function CartProvider({ children }) {
     fetchCart();
   }, [token]);
 
-  const syncCart = async (updatedItems) => {
-    setItems(updatedItems);
+  const pushToServer = async (lineItems) => {
+    const authToken = token();
+    if (!authToken) {
+      return;
+    }
     try {
-      const authToken = token();
-      if (!authToken) {
-        return;
-      }
-      await apiClient.put(
+      const response = await apiClient.put(
         '/cart',
-        { items: updatedItems.map(({ productId, product, quantity }) => ({ productId: productId ?? product.id, quantity })) },
+        { items: lineItems.map(toPayload) },
         {
           headers: { Authorization: `Bearer ${authToken}` }
         }
       );
+      const serverItems =
+        response.data.items?.map((item) => enhanceCartItem({ ...item, product: item.product })) ?? [];
+      setItems(serverItems);
     } catch (error) {
       console.error('Failed to sync cart', error);
     }
   };
 
-  const addItem = (product, quantity = 1) => {
-    const existing = items.find((item) => item.product.id === product.id);
-    const nextItems = existing
-      ? items.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        )
-      : [...items, { productId: product.id, product, quantity }];
+  const syncCart = (nextItems) => {
+    setItems(nextItems);
+    pushToServer(nextItems);
+  };
+
+  const addItem = (product, { quantity = 1, size, color } = {}) => {
+    const lineKey = buildLineKey(product.id, size, color);
+    const existing = items.find((item) => item.lineKey === lineKey);
+    const sanitizedQty = Math.max(1, Number(quantity) || 1);
+    let nextItems;
+
+    if (existing) {
+      nextItems = items.map((item) =>
+        item.lineKey === lineKey
+          ? { ...item, quantity: item.quantity + sanitizedQty }
+          : item
+      );
+    } else {
+      const newItem = enhanceCartItem({
+        product,
+        productId: product.id,
+        quantity: sanitizedQty,
+        selectedSize: size,
+        selectedColor: color
+      });
+      nextItems = [...items, newItem];
+    }
     syncCart(nextItems);
   };
 
-  const updateItem = (productId, quantity) => {
+  const updateItem = (lineKey, quantity) => {
+    const parsed = Math.max(0, Number(quantity) || 0);
     const nextItems = items
-      .map((item) => (item.product.id === productId ? { ...item, productId, quantity } : item))
+      .map((item) => (item.lineKey === lineKey ? { ...item, quantity: parsed } : item))
       .filter((item) => item.quantity > 0);
     syncCart(nextItems);
   };
@@ -69,15 +113,26 @@ export function CartProvider({ children }) {
     syncCart([]);
   };
 
-  const cartTotal = items.reduce((total, item) => total + item.product.price * item.quantity, 0);
-  const cartCount = items.reduce((total, item) => total + item.quantity, 0);
-
-  const value = useMemo(
-    () => ({ items, addItem, updateItem, clearCart, cartTotal, cartCount }),
-    [items, cartTotal, cartCount]
+  const cartTotal = useMemo(
+    () => items.reduce((total, item) => total + (item.product?.price ?? 0) * item.quantity, 0),
+    [items]
   );
+  const cartCount = useMemo(() => items.reduce((total, item) => total + item.quantity, 0), [items]);
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider
+      value={{
+        items,
+        addItem,
+        updateItem,
+        clearCart,
+        cartTotal,
+        cartCount
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
 
 export function useCart() {

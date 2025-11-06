@@ -25,6 +25,13 @@ enum PaymentMethod {
   paypal
 }
 
+enum Audience {
+  WOMEN
+  MEN
+  KIDS
+  UNISEX
+}
+
 model User {
   id              String    @id @default(cuid())
   name            String
@@ -63,6 +70,18 @@ model Product {
   orderItems       OrderItem[]
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
+  audience         Audience   @default(UNISEX)
+  colorOptions     String[]   @default([])
+  sizeOptions      String[]   @default([])
+  materials        String[]   @default([])
+  fit              String?
+  care             String?
+  heroImage        String?
+  galleryImages    String[]   @default([])
+  badges           String[]   @default([])
+  isFeatured       Boolean    @default(false)
+  isNewArrival     Boolean    @default(false)
+  style            String?
 }
 
 model Inventory {
@@ -87,6 +106,8 @@ model CartItem {
   productId String
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
+  selectedSize  String?
+  selectedColor String?
 }
 
 model Order {
@@ -110,4 +131,6 @@ model OrderItem {
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
   unitPrice Decimal  @db.Decimal(10, 2)
+  selectedSize  String?
+  selectedColor String?
 }

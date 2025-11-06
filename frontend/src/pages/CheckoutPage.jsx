@@ -5,6 +5,8 @@ import { useCart } from '../context/CartContext.jsx';
 import apiClient from '../utils/apiClient.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
+const formatTitleCase = (value) => value.replace(/\b\w/g, (char) => char.toUpperCase());
+
 export default function CheckoutPage() {
   const { items, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
@@ -142,16 +144,25 @@ export default function CheckoutPage() {
       <aside className="grid gap-4 self-start rounded-xl border border-slate-200 bg-white p-6">
         <h2 className="text-lg font-semibold text-slate-900">Order summary</h2>
         <ul className="grid gap-3 text-sm text-slate-600">
-          {items.map((item) => (
-            <li key={item.product.id} className="flex items-center justify-between">
-              <span>
-                {item.product.name}
-                <span className="sr-only"> quantity </span>
-                <span aria-hidden="true"> × {item.quantity}</span>
-              </span>
-              <span>${(item.product.price * item.quantity).toFixed(2)}</span>
-            </li>
-          ))}
+          {items.map((item) => {
+            const details = [];
+            if (item.selectedSize) {
+              details.push(`Size ${item.selectedSize.toUpperCase()}`);
+            }
+            if (item.selectedColor) {
+              details.push(formatTitleCase(item.selectedColor));
+            }
+            details.push(`Qty ${item.quantity}`);
+            return (
+              <li key={item.lineKey ?? item.product.id} className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="font-medium text-slate-800">{item.product.name}</span>
+                  <span className="text-xs text-slate-500">{details.join(' • ')}</span>
+                </div>
+                <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+              </li>
+            );
+          })}
         </ul>
         <div className="flex items-center justify-between text-base font-semibold text-slate-900">
           <span>Total</span>

@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import apiClient from '../utils/apiClient.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
+const formatTitleCase = (value) => value.replace(/\b\w/g, (char) => char.toUpperCase());
+
 export default function OrdersPage() {
   const { token } = useAuth();
   const [orders, setOrders] = useState([]);
@@ -45,16 +47,27 @@ export default function OrdersPage() {
                 <p className="text-lg font-semibold text-slate-900">${order.total.toFixed(2)}</p>
               </header>
               <ul className="grid gap-2 text-sm text-slate-600">
-                {order.items.map((item) => (
-                  <li key={item.id} className="flex items-center justify-between">
-                    <span>
-                      {item.product.name}
-                      <span className="sr-only"> quantity </span>
-                      <span aria-hidden="true"> × {item.quantity}</span>
-                    </span>
-                    <span>${(item.unitPrice * item.quantity).toFixed(2)}</span>
-                  </li>
-                ))}
+                {order.items.map((item) => {
+                  const details = [];
+                  if (item.selectedSize) {
+                    details.push(`Size ${item.selectedSize.toUpperCase()}`);
+                  }
+                  if (item.selectedColor) {
+                    details.push(formatTitleCase(item.selectedColor));
+                  }
+                  details.push(`Qty ${item.quantity}`);
+                  return (
+                    <li key={item.id} className="flex items-center justify-between">
+                      <span>
+                        {item.product?.name ?? 'Archived product'}
+                        <span className="ml-2 text-xs uppercase tracking-[0.2em] text-slate-400">
+                          {details.join(' • ')}
+                        </span>
+                      </span>
+                      <span>${(item.unitPrice * item.quantity).toFixed(2)}</span>
+                    </li>
+                  );
+                })}
               </ul>
             </article>
           ))

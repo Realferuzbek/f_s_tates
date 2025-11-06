@@ -1,12 +1,20 @@
 # F-S Tates Marketplace
 
-A full-stack ecommerce marketplace demo featuring a modern React frontend and a secure Express + Prisma backend. The project demonstrates catalog browsing with advanced filters, product detail views, cart and checkout workflows, user accounts, and an admin overview backed by a PostgreSQL database.
+A full-stack fashion marketplace inspired by elevated online destinations. The experience combines a modern React frontend with an Express + Prisma backend to deliver immersive lookbooks, rich product storytelling, size/colour aware carts, and a curated shopping flow that feels at home beside premium platforms such as Uzum Market, Alibaba, or Temu.
 
 ## Tech stack
 
-- **Frontend:** React 18, Vite, React Router, Tailwind CSS, Headless UI
+- **Frontend:** React 18, Vite, React Router, Tailwind CSS with custom gradients and editorial UI patterns
 - **Backend:** Node.js, Express, Prisma ORM, JSON Web Tokens
-- **Database:** PostgreSQL (development seed scripts included via Prisma)
+- **Database:** PostgreSQL (development seed + fashion-focused schema)
+
+## Feature highlights
+
+- Editorial home with featured hero drop, capsule edits, and horizontal product spotlights.
+- Dynamic catalogue filtering across category, audience, brand, colour palettes, size sets, highlights, and price.
+- Detailed product pages with rich galleries, material breakouts, care notes, and required size/colour selection.
+- Cart, checkout, and order history now track selected variants so fulfilment always reflects guest choices.
+- Admin dashboard surfaces audience targeting and highlight badges alongside key revenue metrics.
 
 ## Project structure
 
@@ -40,6 +48,8 @@ npm install --prefix backend
 
 ### 3. Apply migrations and seed sample data
 
+This release expands the Prisma schema with fashion-specific fields (audience, colour and size options, hero imagery, product badges, and cart/order variant tracking). Apply the migration before seeding:
+
 ```bash
 npm run prisma:migrate --prefix backend
 npm run prisma:seed --prefix backend
@@ -48,7 +58,8 @@ npm run prisma:seed --prefix backend
 The seed script provisions:
 - An administrator account `admin@fstates.dev` / `password123`
 - A sample customer `customer@fstates.dev` / `password123`
-- Categories, products, and inventory data used across the UI
+- Womenswear, menswear, kids, footwear, and accessories categories stocked with limited-run garments
+- Rich product metadata including colour palettes, size ladders, materials, and editorial badges used across the UI
 
 ### 4. Start the development servers
 
@@ -75,11 +86,12 @@ Package the backend for deployment by installing dependencies with `npm install 
 | --- | --- |
 | `POST /api/auth/register` | Create a new customer account |
 | `POST /api/auth/login` | Authenticate and receive a JWT |
-| `GET /api/products` | Browse products with search, category, price, and sort filters |
-| `GET /api/products/:id` | Fetch detailed product information |
-| `GET/PUT /api/cart` | Retrieve or replace the authenticated user’s cart |
-| `POST /api/orders/checkout` | Place an order from the current cart |
-| `GET /api/orders` | View authenticated order history |
+| `GET /api/products` | Browse products with full-text, category, audience, brand, colour (`colors`), size (`sizes`), badge, price, and sort filters |
+| `GET /api/products/curated` | Fetch hero, new arrivals, capsule edit, and statement piece groupings for the home experience |
+| `GET /api/products/:id` | Fetch detailed product information including gallery, materials, care, and variant options |
+| `GET/PUT /api/cart` | Retrieve or replace the authenticated user’s cart (now variant-aware) |
+| `POST /api/orders/checkout` | Place an order from the current cart, persisting selected size/colour variants |
+| `GET /api/orders` | View authenticated order history with variant details |
 | `GET /api/admin/metrics` | Admin-only dashboard metrics and catalog snapshot |
 
 All authenticated routes require an `Authorization: Bearer <token>` header using the JWT returned from the login endpoint.
@@ -98,6 +110,6 @@ All authenticated routes require an `Authorization: Bearer <token>` header using
 
 ## Further improvements
 
-- Integrate payment providers and transactional email services.
-- Add guest checkout and saved payment methods.
-- Expand the admin area with product creation/editing flows and analytics.
+- Layer in live inventory feeds and atelier availability to keep quantities up to the minute.
+- Integrate payment gateways and transactional communications for production readiness.
+- Expand the admin studio with product creation, curation tools, and editorial scheduling.

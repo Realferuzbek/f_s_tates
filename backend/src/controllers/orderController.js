@@ -43,7 +43,9 @@ export async function checkout(req, res, next) {
           create: cart.items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
-            unitPrice: item.product.price
+            unitPrice: item.product.price,
+            selectedSize: item.selectedSize ?? null,
+            selectedColor: item.selectedColor ?? null
           }))
         }
       },

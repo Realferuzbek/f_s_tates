@@ -1,12 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import apiClient from '../utils/apiClient.js';
 import { useCart } from '../context/CartContext.jsx';
+import { getColorSwatchClass } from '../utils/palette.js';
+
+const formatTitleCase = (value) => value.replace(/\b\w/g, (char) => char.toUpperCase());
 
 export default function ProductDetailPage() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -16,9 +22,26 @@ export default function ProductDetailPage() {
       .catch((err) => setError(err));
   }, [productId]);
 
+  useEffect(() => {
+    if (!product) return;
+    const gallery = [product.heroImage, product.image, ...(product.galleryImages ?? [])].filter(Boolean);
+    setSelectedImage(gallery[0] ?? null);
+    if (product.sizeOptions?.length && !selectedSize) {
+      setSelectedSize(product.sizeOptions[0]);
+    }
+    if (product.colorOptions?.length && !selectedColor) {
+      setSelectedColor(product.colorOptions[0]);
+    }
+  }, [product]);
+
+  const galleryImages = useMemo(
+    () => (product ? [product.heroImage, product.image, ...(product.galleryImages ?? [])].filter(Boolean) : []),
+    [product]
+  );
+
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+      <div className="rounded-2xl border border-red-200 bg-red-50/80 p-6 text-sm text-red-700">
         Unable to load this product. Please try again later.
       </div>
     );
@@ -26,65 +49,196 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="grid h-64 place-items-center rounded-xl border border-dashed border-slate-300 bg-white">
+      <div className="grid h-64 place-items-center rounded-2xl border border-dashed border-slate-300 bg-white/80">
         <p className="text-sm text-slate-500">Loading product details…</p>
       </div>
     );
   }
 
+  const inventoryCount = product.inventory?.quantity ?? 0;
+  const requiresSize = product.sizeOptions?.length;
+  const requiresColor = product.colorOptions?.length;
+  const disableCta = (requiresSize && !selectedSize) || (requiresColor && !selectedColor) || inventoryCount === 0;
+
   return (
-    <div className="grid gap-10 lg:grid-cols-2">
-      <section aria-labelledby="product-gallery" className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 id="product-gallery" className="sr-only">
-          Product gallery
+    <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+      <section aria-labelledby="product-gallery" className="space-y-5">
+        <h2 id="product-gallery" className="text-xs uppercase tracking-[0.3em] text-slate-400">
+          Lookbook
         </h2>
-        <div className="aspect-square overflow-hidden rounded-lg bg-slate-100">
-          {product.image ? (
-            <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full items-center justify-center text-sm text-slate-500">
-              Image coming soon
+        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-xl">
+          <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-slate-100">
+            {selectedImage ? (
+              <img src={selectedImage} alt={product.name} className="h-full w-full object-cover" loading="lazy" />
+            ) : (
+              <div className="grid h-full place-items-center text-sm text-slate-500">Editorial image coming soon</div>
+            )}
+          </div>
+          {galleryImages.length > 1 && (
+            <div className="mt-4 flex gap-3 overflow-x-auto">
+              {galleryImages.map((image) => (
+                <button
+                  key={image}
+                  onClick={() => setSelectedImage(image)}
+                  className={`h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border ${
+                    selectedImage === image ? 'border-primary-500' : 'border-slate-200'
+                  }`}
+                  type="button"
+                >
+                  <img src={image} alt="" className="h-full w-full object-cover" loading="lazy" />
+                </button>
+              ))}
             </div>
           )}
         </div>
       </section>
-      <section aria-labelledby="product-info" className="grid gap-6">
-        <div>
-          <p className="text-sm font-medium text-primary-600">{product.category?.name}</p>
-          <h1 id="product-info" className="mt-2 text-3xl font-semibold text-slate-900">
+      <section aria-labelledby="product-info" className="space-y-8">
+        <div className="space-y-3">
+          <p className="text-xs uppercase tracking-[0.35em] text-primary-600">
+            {product.brand} • {formatTitleCase(product.category?.name ?? 'Limited')}
+          </p>
+          <h1 id="product-info" className="text-4xl font-semibold text-slate-900">
             {product.name}
           </h1>
-          <p className="mt-2 text-sm text-slate-600">{product.shortDescription}</p>
+          <p className="text-sm leading-relaxed text-slate-600">{product.shortDescription}</p>
+          <div className="flex flex-wrap gap-2">
+            {(product.badges ?? []).slice(0, 4).map((badge) => (
+              <span key={badge} className="rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-600">
+                {formatTitleCase(badge)}
+              </span>
+            ))}
+          </div>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-5">
-          <p className="text-2xl font-semibold text-primary-600">${product.price.toFixed(2)}</p>
-          <p className="mt-2 text-sm text-slate-600">
-            {product.inventory?.quantity > 0 ? `${product.inventory.quantity} in stock` : 'Out of stock'}
-          </p>
+
+        <div className="space-y-6 rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-3xl font-semibold text-slate-900">${product.price.toFixed(2)}</span>
+            <span className="text-xs uppercase tracking-[0.3em] text-slate-500">
+              {inventoryCount > 0 ? `${inventoryCount} pieces available` : 'Join waitlist'}
+            </span>
+          </div>
+          {requiresColor && (
+            <fieldset className="space-y-3">
+              <legend className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">
+                Colour palette
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                {product.colorOptions.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setSelectedColor(color)}
+                    className={`group flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                      selectedColor === color
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-slate-200 text-slate-600 hover:border-primary-300 hover:text-primary-600'
+                    }`}
+                  >
+                    <span
+                      className={`h-4 w-4 rounded-full ${getColorSwatchClass(color)} ring-1 ring-black/10`}
+                      aria-hidden="true"
+                    />
+                    {formatTitleCase(color)}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
+          {requiresSize && (
+            <fieldset className="space-y-3">
+              <legend className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Size</legend>
+              <div className="flex flex-wrap gap-2">
+                {product.sizeOptions.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    className={`min-w-[3rem] rounded-xl border px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] ${
+                      selectedSize === size
+                        ? 'border-slate-900 bg-slate-900 text-white'
+                        : 'border-slate-200 text-slate-600 hover:border-primary-400 hover:text-primary-600'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
           <button
-            onClick={() => addItem(product)}
-            className="mt-4 w-full rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            onClick={() =>
+              addItem(product, {
+                size: selectedSize || undefined,
+                color: selectedColor || undefined
+              })
+            }
+            disabled={disableCta}
+            className="w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold uppercase tracking-[0.4em] text-white shadow-lg shadow-slate-900/25 transition hover:-translate-y-0.5 hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
-            Add to cart
+            {inventoryCount > 0 ? 'Add to bag' : 'Notify me'}
           </button>
+          <p className="text-xs text-slate-500">
+            Complimentary alterations and express international delivery included with every purchase.
+          </p>
         </div>
-        <div className="grid gap-3">
-          <h2 className="text-lg font-semibold text-slate-900">Details</h2>
-          <p className="text-sm leading-relaxed text-slate-600">{product.description}</p>
-          <dl className="grid gap-2 text-sm text-slate-600">
-            <div className="grid grid-cols-[120px_1fr] gap-2">
-              <dt className="font-medium text-slate-500">SKU</dt>
+
+        <div className="grid gap-6 rounded-3xl border border-slate-200 bg-white/70 p-6 shadow">
+          <div className="space-y-2">
+            <h2 className="text-lg font-semibold text-slate-900">The story</h2>
+            <p className="text-sm leading-relaxed text-slate-600">{product.description}</p>
+          </div>
+          <dl className="grid gap-4 text-sm text-slate-600 md:grid-cols-2">
+            <div className="space-y-1">
+              <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">SKU</dt>
               <dd>{product.sku}</dd>
             </div>
-            <div className="grid grid-cols-[120px_1fr] gap-2">
-              <dt className="font-medium text-slate-500">Brand</dt>
-              <dd>{product.brand}</dd>
+            <div className="space-y-1">
+              <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Audience</dt>
+              <dd>{formatTitleCase(product.audience ?? 'Unisex')}</dd>
             </div>
-            <div className="grid grid-cols-[120px_1fr] gap-2">
-              <dt className="font-medium text-slate-500">Tags</dt>
-              <dd>{product.tags?.join(', ')}</dd>
-            </div>
+            {product.fit && (
+              <div className="space-y-1">
+                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Fit</dt>
+                <dd>{product.fit}</dd>
+              </div>
+            )}
+            {product.style && (
+              <div className="space-y-1">
+                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Capsule</dt>
+                <dd>{product.style}</dd>
+              </div>
+            )}
           </dl>
+          <div className="grid gap-4 md:grid-cols-2">
+            {product.materials?.length > 0 && (
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Materials</h3>
+                <ul className="mt-2 space-y-1">
+                  {product.materials.map((material) => (
+                    <li key={material} className="text-sm text-slate-600">
+                      {formatTitleCase(material)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {product.care && (
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Care</h3>
+                <p className="mt-2 text-sm text-slate-600">{product.care}</p>
+              </div>
+            )}
+          </div>
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Tags</h3>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(product.tags ?? []).map((tag) => (
+                <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </div>

@@ -19,7 +19,9 @@ export async function getCart(req, res, next) {
         id: item.id,
         quantity: item.quantity,
         product: serializeProduct(item.product),
-        productId: item.productId
+        productId: item.productId,
+        selectedSize: item.selectedSize,
+        selectedColor: item.selectedColor
       }))
     });
   } catch (error) {
@@ -39,13 +41,15 @@ export async function updateCart(req, res, next) {
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
 
     const createOperations = items
-      .filter((item) => item.quantity > 0)
+      .filter((item) => item.quantity > 0 && item.productId)
       .map((item) =>
         prisma.cartItem.create({
           data: {
             cartId: cart.id,
             productId: item.productId,
-            quantity: item.quantity
+            quantity: item.quantity,
+            selectedSize: item.selectedSize ?? null,
+            selectedColor: item.selectedColor ?? null
           }
         })
       );
@@ -64,7 +68,9 @@ export async function updateCart(req, res, next) {
         id: item.id,
         quantity: item.quantity,
         product: serializeProduct(item.product),
-        productId: item.productId
+        productId: item.productId,
+        selectedSize: item.selectedSize,
+        selectedColor: item.selectedColor
       }))
     });
   } catch (error) {

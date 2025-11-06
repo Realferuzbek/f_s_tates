@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import apiClient from '../utils/apiClient.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
+const formatTitleCase = (value) => value.replace(/\b\w/g, (char) => char.toUpperCase());
+
 export default function AdminDashboard() {
   const { token } = useAuth();
   const [metrics, setMetrics] = useState(null);
@@ -49,6 +51,8 @@ export default function AdminDashboard() {
               <tr>
                 <th scope="col" className="px-4 py-3">Name</th>
                 <th scope="col" className="px-4 py-3">Category</th>
+                <th scope="col" className="px-4 py-3">Audience</th>
+                <th scope="col" className="px-4 py-3">Highlights</th>
                 <th scope="col" className="px-4 py-3">Price</th>
                 <th scope="col" className="px-4 py-3">Inventory</th>
                 <th scope="col" className="px-4 py-3">Status</th>
@@ -59,6 +63,14 @@ export default function AdminDashboard() {
                 <tr key={product.id} className="odd:bg-white even:bg-slate-50">
                   <td className="px-4 py-3 font-medium text-slate-800">{product.name}</td>
                   <td className="px-4 py-3 text-slate-600">{product.category?.name}</td>
+                  <td className="px-4 py-3 text-slate-600">{product.audience ? formatTitleCase(product.audience) : '—'}</td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {(product.badges ?? []).slice(0, 2).map((badge) => (
+                      <span key={badge} className="mr-1 inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium">
+                        {badge}
+                      </span>
+                    ))}
+                  </td>
                   <td className="px-4 py-3 text-slate-600">${product.price.toFixed(2)}</td>
                   <td className="px-4 py-3 text-slate-600">{product.inventory?.quantity}</td>
                   <td className="px-4 py-3">
