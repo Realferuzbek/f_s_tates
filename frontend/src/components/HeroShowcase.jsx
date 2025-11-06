@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { getColorSwatchClass } from '../utils/palette.js';
+import BrandIcon from './BrandIcon.jsx';
 
 function formatTitleCase(value) {
   return value.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -33,6 +34,7 @@ export default function HeroShowcase({ product, loading = false }) {
       <div className="relative grid gap-10 p-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
         <div className="max-w-xl space-y-6">
           <div className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.35em] text-white/70">
+            <BrandIcon size={28} className="drop-shadow-[0_6px_12px_rgba(0,0,0,0.2)]" label="F-S Tates monogram" />
             <span>Featured drop</span>
             <span className="h-px flex-1 bg-white/20" aria-hidden="true" />
           </div>

@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import SearchFilters from '../components/SearchFilters.jsx';
 import HeroShowcase from '../components/HeroShowcase.jsx';
 import ProductCarousel from '../components/ProductCarousel.jsx';
+import BrandIcon from '../components/BrandIcon.jsx';
 
 const brandHighlights = [
   {
@@ -88,7 +89,10 @@ export default function HomePage() {
       <section className="grid gap-4 rounded-3xl bg-gradient-to-br from-white via-primary-50/40 to-white p-8 shadow-lg md:grid-cols-3">
         {brandHighlights.map((item) => (
           <article key={item.title} className="flex flex-col gap-2 rounded-2xl border border-white/60 bg-white/70 p-5 shadow-sm backdrop-blur md:gap-3">
-            <h3 className="text-base font-semibold text-slate-900">{item.title}</h3>
+            <div className="flex items-center gap-2">
+              <BrandIcon size={22} />
+              <h3 className="text-base font-semibold text-slate-900">{item.title}</h3>
+            </div>
             <p className="text-sm text-slate-600">{item.description}</p>
           </article>
         ))}

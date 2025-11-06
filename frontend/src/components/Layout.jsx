@@ -3,6 +3,7 @@ import { Bars3Icon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
+import BrandIcon from './BrandIcon.jsx';
 
 const navLinkClass = ({ isActive }) =>
   isActive
@@ -28,7 +29,8 @@ export default function Layout({ children }) {
       <header className="sticky top-0 z-40 border-b border-white/40 bg-white/80 backdrop-blur-xl">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <Link to="/" className="text-xl font-semibold tracking-[0.3em] text-slate-900">
+            <Link to="/" className="flex items-center gap-2 text-xl font-semibold tracking-[0.3em] text-slate-900">
+              <BrandIcon size={30} />
               F•S TATES
             </Link>
             <span className="hidden text-xs uppercase tracking-[0.4em] text-slate-400 sm:inline">
@@ -133,7 +135,10 @@ export default function Layout({ children }) {
       <footer className="mt-16 bg-white/90 py-10 text-sm text-slate-500">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-3 sm:px-6 lg:px-8">
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">F•S Tates</h3>
+            <div className="flex items-center gap-2">
+              <BrandIcon size={20} />
+              <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">F•S Tates</h3>
+            </div>
             <p className="mt-2 text-sm text-slate-500">
               A global destination for future-forward fashion, spotlighting emerging ateliers and mindful craftsmanship.
             </p>

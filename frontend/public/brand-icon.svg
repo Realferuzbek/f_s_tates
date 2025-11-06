@@ -1,0 +1,15 @@
+<svg width="256" height="257" viewBox="0 0 256 257" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="brand-gradient" x1="0" y1="0" x2="256" y2="257" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5C7CFF" />
+      <stop offset="0.5" stop-color="#6BC4FF" />
+      <stop offset="1" stop-color="#EC4ECF" />
+    </linearGradient>
+    <linearGradient id="brand-bolt" x1="132.27" y1="30.90" x2="74.64" y2="187.33" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE56A" />
+      <stop offset="1" stop-color="#FFB115" />
+    </linearGradient>
+  </defs>
+  <path d="M12.51 42.58L112.13 230.08c4.5 8.6 16.7 8.6 21.2 0l99.6-187.5c3.9-7.4-3.4-15.7-11.3-13.2L132.3 57.2c-7.6 2.5-15.9 2.5-23.5 0L23.8 29.36c-7.9-2.44-15.2 5.79-11.29 13.22z" fill="url(#brand-gradient)"/>
+  <path d="M156.636 71.1472L91.4245 148.251C89.5401 150.5 91.96 153.69 94.7305 152.632L139.17 135.88C140.012 135.556 140.86 136.312 140.603 137.18L120.05 207.192C119.29 209.743 122.572 211.183 124.154 208.993L190.204 119.879C192.06 117.398 189.046 114.319 186.342 115.587L142.214 136.349C141.384 136.736 140.508 135.943 140.772 135.066L162.351 63.7503C163.153 61.0823 159.602 59.0101 157.639 61.1192L156.636 62.2107V71.1472Z" fill="url(#brand-bolt)"/>
+</svg>

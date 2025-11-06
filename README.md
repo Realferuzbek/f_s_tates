@@ -15,6 +15,7 @@ A full-stack fashion marketplace inspired by elevated online destinations. The e
 - Detailed product pages with rich galleries, material breakouts, care notes, and required size/colour selection.
 - Cart, checkout, and order history now track selected variants so fulfilment always reflects guest choices.
 - Admin dashboard surfaces audience targeting and highlight badges alongside key revenue metrics.
+- Custom lightning badge (`frontend/public/brand-icon.svg`) keeps the storefront and browser chrome on-brand across navigation, hero moments, and metadata.
 
 ## Project structure
 
