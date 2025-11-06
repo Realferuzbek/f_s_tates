@@ -97,6 +97,13 @@ Package the backend for deployment by installing dependencies with `npm install 
 
 All authenticated routes require an `Authorization: Bearer <token>` header using the JWT returned from the login endpoint.
 
+## SEO & Indexing
+
+- `frontend/public/robots.txt` and `frontend/public/sitemap.xml` are generated at build time by `node frontend/scripts/build-seo.mjs`. Run `npm run sitemap --prefix frontend` locally whenever routes change, or rely on the `postbuild` hook that Vercel executes automatically.
+- Set `VITE_SITE_URL` (and optionally `VITE_API_BASE_URL` so product detail URLs are fetched from your backend) in the Vercel environment. The script uses these values to form absolute `<loc>` URLs and to link to `Sitemap: https://your-domain/sitemap.xml`.
+- The reusable `<Seo />` component at `frontend/src/components/Seo.jsx` centralizes default `<title>`, description, robots, canonical, Open Graph, and Twitter tags. It consumes `VITE_SITE_URL` for canonical links and social preview URLs.
+- Each page already inherits `<Seo />` via `Layout`. To override metadata per route, import `Seo` directly in that page and render it with custom props (e.g., `<Seo title="New Drop" description="..." image="/social/new-drop.jpg" />`).
+
 ## Accessibility and UX notes
 
 - Semantic HTML landmarks, focus-visible styles, and aria labels ensure the UI is screen reader friendly.

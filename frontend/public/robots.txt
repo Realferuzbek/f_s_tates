@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /account/orders
+Disallow: /checkout
+Sitemap: https://fstates.vercel.app/sitemap.xml
