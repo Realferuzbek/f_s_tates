@@ -108,6 +108,7 @@ All authenticated routes require an `Authorization: Bearer <token>` header using
 - Run `npm run prisma:generate --prefix backend` during your build step to ensure Prisma client is compiled.
 - Serve the frontend static build (`frontend/dist`) via your preferred CDN or static host and proxy API requests to the Express server.
 - When deploying to Vercel, include the provided `vercel.json` and root `package.json`. They instruct Vercel to install from `frontend/`, emit the Vite build into `frontend/dist`, and serve it as a single-page app by first checking for static assets (via `{"handle":"filesystem"}`) and then falling back to `index.html`. Set `VITE_API_BASE_URL` in your Vercel environment variables so the client knows where to reach the running backend (e.g., `https://your-backend-host.com/api`).
+- For Render (or any Node host running the backend directly), just point the service root to `backend/`, keep the build command as `npm install`, and leave the start command as `npm start`. The backend `postinstall` hook now calls `npm run prisma:generate` and the Prisma CLI ships in production dependencies, so the generated client exists before the server boots.
 
 ## Further improvements
 

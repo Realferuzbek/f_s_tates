@@ -5,12 +5,17 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "postinstall": "npm run prisma:generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
+    "seed": "node prisma/seed.js",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:generate": "prisma generate",
     "prisma:seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",
+    "prisma": "^5.21.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -20,7 +25,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7",
-    "prisma": "^5.21.1"
+    "nodemon": "^3.1.7"
   }
 }
