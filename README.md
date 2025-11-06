@@ -107,6 +107,7 @@ All authenticated routes require an `Authorization: Bearer <token>` header using
 - Configure environment variables (`DATABASE_URL`, `JWT_SECRET`, `PORT`) on the target platform.
 - Run `npm run prisma:generate --prefix backend` during your build step to ensure Prisma client is compiled.
 - Serve the frontend static build (`frontend/dist`) via your preferred CDN or static host and proxy API requests to the Express server.
+- When deploying to Vercel, include the provided `vercel.json` and root `package.json`. They instruct Vercel to install from `frontend/`, emit the Vite build into `frontend/dist`, and serve it as a single-page app. Set `VITE_API_BASE_URL` in your Vercel environment variables so the client knows where to reach the running backend (e.g., `https://your-backend-host.com/api`).
 
 ## Further improvements
 

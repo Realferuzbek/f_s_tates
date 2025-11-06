@@ -1,0 +1,8 @@
+{
+  "name": "f_s_tates",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --prefix frontend"
+  }
+}
