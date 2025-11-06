@@ -3,10 +3,8 @@
   "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
-  "rewrites": [
-    {
-      "source": "/(?!assets/|favicon\\.ico|robots\\.txt|manifest\\.webmanifest).+",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
   ]
 }
