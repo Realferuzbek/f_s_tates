@@ -1,6 +1,6 @@
 # F-S Tates Marketplace
 
-A full-stack fashion marketplace inspired by elevated online destinations. The experience combines a modern React frontend with an Express + Prisma backend to deliver immersive lookbooks, rich product storytelling, size/colour aware carts, and a curated shopping flow that feels at home beside premium platforms such as Uzum Market, Alibaba, or Temu.
+A full-stack fashion marketplace inspired by elevated online destinations. The experience combines a modern React frontend with an Express + Prisma backend to deliver immersive lookbooks, rich product storytelling, size/colour aware carts, and a curated shopping flow that feels at home beside premium platforms such as Uzum Market, Alibaba, and Temu.
 
 ## Tech stack
 
