@@ -1,8 +1,12 @@
-{
+﻿{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
   "framework": "vite",
-  "installCommand": "npm install --prefix frontend",
   "buildCommand": "npm run build --prefix frontend",
+  "installCommand": "npm install --prefix frontend",
   "outputDirectory": "frontend/dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/sitemap.xml",
@@ -14,8 +18,13 @@
     {
       "source": "/robots.txt",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=0, must-revalidate" }
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/robots.txt", "destination": "/robots.txt" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
