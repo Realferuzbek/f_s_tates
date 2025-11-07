@@ -1,11 +1,12 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import path from 'node:path';
+import { writeFile, mkdir, access } from 'node:fs/promises';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, '..');
-const publicDir = path.join(projectRoot, 'public');
+const __dirname = dirname(__filename);
+const rootDir = join(__dirname, '..');
+const publicDir = join(rootDir, 'public');
+const distDir = join(rootDir, 'dist');
 
 const fallbackSiteUrl = 'https://fstates.vercel.app';
 const siteEnv = process.env.VITE_SITE_URL;
@@ -58,7 +59,12 @@ function buildSitemapXml(routes) {
     })
     .join('\n');
 
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries}\n</urlset>\n`;
+  return (
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    `${urlEntries}\n` +
+    `</urlset>`
+  );
 }
 
 async function buildRobotsTxt() {
@@ -85,9 +91,20 @@ async function main() {
   const robotsTxt = await buildRobotsTxt();
 
   await Promise.all([
-    writeFile(path.join(publicDir, 'sitemap.xml'), sitemapXml, 'utf8'),
-    writeFile(path.join(publicDir, 'robots.txt'), robotsTxt, 'utf8')
+    writeFile(join(publicDir, 'sitemap.xml'), sitemapXml, 'utf8'),
+    writeFile(join(publicDir, 'robots.txt'), robotsTxt, 'utf8')
   ]);
+
+  try {
+    await access(distDir);
+    await Promise.all([
+      writeFile(join(distDir, 'sitemap.xml'), sitemapXml, 'utf8'),
+      writeFile(join(distDir, 'robots.txt'), robotsTxt, 'utf8')
+    ]);
+    console.log('✓ Also wrote sitemap.xml and robots.txt to dist/');
+  } catch {
+    // dist not present in dev; ignore
+  }
 
   console.log(`Generated sitemap with ${uniqueRoutes.length} URLs and robots.txt at ${publicDir}`);
 }
