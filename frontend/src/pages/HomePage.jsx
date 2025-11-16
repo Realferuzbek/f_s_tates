@@ -6,7 +6,7 @@ import SearchFilters from '../components/SearchFilters.jsx';
 import HeroShowcase from '../components/HeroShowcase.jsx';
 import ProductCarousel from '../components/ProductCarousel.jsx';
 import BrandIcon from '../components/BrandIcon.jsx';
-import CategoryCard from '../components/CategoryCard.jsx';
+import MarketplaceTable from '../components/MarketplaceTable.jsx';
 import { marketplaceCategories } from '../data/marketplaceCategories.js';
 
 const brandHighlights = [
@@ -81,6 +81,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-16">
+      <MarketplaceTable categories={marketplaceCategories} />
       {curated.hero && (
         <HeroShowcase
           product={curated.hero}
@@ -119,8 +120,8 @@ export default function HomePage() {
               <h1 className="text-3xl font-semibold text-slate-900">Choose your table, then refine</h1>
             </div>
             <p className="text-sm text-slate-600">
-              On desktop the marketplace opens as a field of curated categories—select an atelier focus and keep the left
-              filters engaged to narrow future drops.
+              Start with the desktop tables at the top of the page—tap a general lane like boots or scarves and then keep the
+              filters on the left engaged to narrow future drops.
             </p>
             {activeFilterChips.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-2">
@@ -135,17 +136,6 @@ export default function HomePage() {
               </div>
             )}
           </header>
-          <section className="hidden flex-col gap-4 lg:flex">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Marketplace tables</p>
-              <span className="text-sm text-slate-500">Each capsule links to a focused landing page—more data coming soon.</span>
-            </div>
-            <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              {marketplaceCategories.map((category) => (
-                <CategoryCard key={category.slug} category={category} />
-              ))}
-            </div>
-          </section>
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (

@@ -86,10 +86,12 @@ export default function Layout({ children }) {
               </NavLink>
             )}
           </div>
+          <div className="hidden h-8 w-px rounded-full bg-slate-200 sm:flex" aria-hidden="true" />
           <div className="hidden items-center gap-4 sm:flex">
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-600 transition hover:border-primary-300 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
+              aria-disabled="true"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-600 opacity-70 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 cursor-not-allowed"
             >
               <ChatBubbleLeftRightIcon className="h-4 w-4" aria-hidden="true" />
               Chat
@@ -98,21 +100,23 @@ export default function Layout({ children }) {
               <button
                 type="button"
                 onClick={() => setAvatarOpen((open) => !open)}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold uppercase tracking-[0.3em] text-slate-700 shadow-sm transition hover:border-primary-300 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold uppercase tracking-[0.3em] text-slate-700 shadow-sm transition hover:border-primary-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
                 aria-haspopup="menu"
                 aria-expanded={avatarOpen}
+                aria-label="Open profile quick menu"
               >
-                FS
+                <img
+                  src="/associate-avatar.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="h-9 w-9 rounded-full object-cover"
+                />
               </button>
               {avatarOpen && (
-                <div className="absolute right-0 z-40 mt-3 w-40 rounded-2xl border border-slate-200 bg-white/95 p-3 text-sm shadow-2xl ring-1 ring-black/5">
-                  <p className="text-[10px] uppercase tracking-[0.35em] text-slate-400">Profile</p>
-                  <button
-                    type="button"
-                    className="mt-2 w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                  >
+                <div className="absolute right-0 z-40 mt-3 w-44 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm shadow-2xl ring-1 ring-black/5">
+                  <p className="text-center text-xs font-semibold uppercase tracking-[0.35em] text-slate-600">
                     Settings
-                  </button>
+                  </p>
                 </div>
               )}
             </div>
