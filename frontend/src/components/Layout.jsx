@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bars3Icon, ChatBubbleLeftRightIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useCart } from '../context/CartContext.jsx';
 import BrandIcon from './BrandIcon.jsx';
 import Seo from './Seo.jsx';
 
@@ -13,7 +12,6 @@ const navLinkClass = ({ isActive }) =>
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
-  const { cartCount } = useCart();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
@@ -61,20 +59,7 @@ export default function Layout({ children }) {
               Curated fashion marketplace
             </span>
           </div>
-          <div className="hidden items-center gap-8 text-sm font-medium sm:flex">
-            <NavLink to="/" className={navLinkClass}>
-              Collection
-            </NavLink>
-            <NavLink to="/cart" className={navLinkClass}>
-              <span className="inline-flex items-center gap-2">
-                <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
-                Bag
-                <span className="sr-only">items in bag</span>
-                <span className="rounded-full bg-primary-100 px-2 py-0.5 text-xs text-primary-600">
-                  {cartCount}
-                </span>
-              </span>
-            </NavLink>
+          <div className="hidden flex-1 items-center justify-center gap-8 text-sm font-medium sm:flex">
             {user && (
               <NavLink to="/account" className={navLinkClass}>
                 My account
@@ -147,12 +132,6 @@ export default function Layout({ children }) {
         {mobileOpen && (
           <div className="border-t border-slate-200 bg-white/90 px-4 pb-6 pt-4 sm:hidden">
             <div className="flex flex-col gap-3 text-sm font-medium">
-              <NavLink to="/" className={navLinkClass} onClick={() => setMobileOpen(false)}>
-                Collection
-              </NavLink>
-              <NavLink to="/cart" className={navLinkClass} onClick={() => setMobileOpen(false)}>
-                Bag
-              </NavLink>
               {user && (
                 <NavLink to="/account" className={navLinkClass} onClick={() => setMobileOpen(false)}>
                   My account
