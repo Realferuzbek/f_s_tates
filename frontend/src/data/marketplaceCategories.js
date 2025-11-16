@@ -6,56 +6,64 @@ export const marketplaceCategories = [
     subtitle: 'Sculpted boots in vegetable-tanned hides',
     slug: 'boots',
     accentClass: 'from-rose-50 via-amber-50 to-white',
-    Icon: SparklesIcon
+    Icon: SparklesIcon,
+    imageUrl: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Scarves & Wraps',
     subtitle: 'Featherlight silks and seasonless cashmere',
     slug: 'scarves',
     accentClass: 'from-slate-50 via-white to-emerald-50/60',
-    Icon: CloudIcon
+    Icon: CloudIcon,
+    imageUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Coats & Jackets',
     subtitle: 'Architected silhouettes for every climate',
     slug: 'coats-jackets',
     accentClass: 'from-blue-50 via-indigo-50 to-white',
-    Icon: Squares2X2Icon
+    Icon: Squares2X2Icon,
+    imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Dresses',
     subtitle: 'Gallery-worthy gowns and day dresses',
     slug: 'dresses',
     accentClass: 'from-fuchsia-50 via-rose-50 to-white',
-    Icon: FireIcon
+    Icon: FireIcon,
+    imageUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Knitwear',
     subtitle: 'Regenerative alpaca and cloud-soft cashmere',
     slug: 'knitwear',
     accentClass: 'from-amber-50 via-white to-slate-50',
-    Icon: SwatchIcon
+    Icon: SwatchIcon,
+    imageUrl: 'https://images.unsplash.com/photo-1490111718993-d98654ce6cf7?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Bags & Accessories',
     subtitle: 'Hand-woven totes and precision hardware',
     slug: 'bags-accessories',
     accentClass: 'from-emerald-50 via-white to-lime-50',
-    Icon: GlobeAltIcon
+    Icon: GlobeAltIcon,
+    imageUrl: 'https://images.unsplash.com/photo-1528701800489-20be3cbe2522?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Tailored Tops',
     subtitle: 'Architected shirting with couture finishes',
     slug: 'tops',
     accentClass: 'from-slate-50 via-slate-100 to-white',
-    Icon: BeakerIcon
+    Icon: BeakerIcon,
+    imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Trousers & Skirts',
     subtitle: 'Fluid pleats and precision tailoring',
     slug: 'trousers-skirts',
     accentClass: 'from-purple-50 via-white to-rose-50',
-    Icon: CubeTransparentIcon
+    Icon: CubeTransparentIcon,
+    imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80'
   }
 ];
 

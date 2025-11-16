@@ -20,7 +20,7 @@ export default function MarketplaceTable({ categories }) {
         </header>
         <div className="mt-6 grid auto-rows-[200px] grid-cols-4 gap-5">
           {categories.map((category, index) => {
-            const { title, subtitle, slug, accentClass, Icon } = category;
+            const { title, subtitle, slug, accentClass, Icon, imageUrl } = category;
             const isFeatured = index === 0;
             return (
               <Link
@@ -31,11 +31,23 @@ export default function MarketplaceTable({ categories }) {
                 } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500`}
                 aria-label={`Browse the ${title} table`}
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                  {imageUrl && (
+                    <div
+                      className={`pointer-events-none absolute ${isFeatured ? 'bottom-6 right-6 h-[78%] w-[65%]' : 'bottom-4 right-4 h-[65%] w-[68%]'}`}
+                    >
+                      <div className="h-full w-full overflow-hidden rounded-[32px] shadow-[0_30px_55px_rgba(15,23,42,0.35)] ring-1 ring-slate-900/5">
+                        <img src={imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/85 via-white/15 to-slate-900/5" />
+                </div>
+                <div className="relative z-10 flex items-start justify-between gap-4">
                   <div className="space-y-3">
                     <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500">Market table</p>
                     <h3 className={`${isFeatured ? 'text-3xl' : 'text-xl'} font-semibold text-slate-900`}>{title}</h3>
-                    {subtitle && <p className="text-sm text-slate-600">{subtitle}</p>}
+                    {subtitle && <p className="max-w-sm text-sm text-slate-600">{subtitle}</p>}
                   </div>
                   {Icon && (
                     <span className="rounded-2xl border border-white/60 bg-white/70 p-3 text-slate-500 shadow-inner">
@@ -43,7 +55,7 @@ export default function MarketplaceTable({ categories }) {
                     </span>
                   )}
                 </div>
-                <div className="mt-8 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-slate-700">
+                <div className="relative z-10 mt-8 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-slate-700">
                   <span>Shop this table</span>
                   <ArrowUpRightIcon className="h-5 w-5 text-primary-500 transition group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden="true" />
                 </div>
