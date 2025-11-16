@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import BrandIcon from './BrandIcon.jsx';
 import Seo from './Seo.jsx';
 import AuroraBackground from './AuroraBackground.jsx';
+import LanguageSelector from './LanguageSelector.jsx';
 
 const navLinkClass = ({ isActive }) =>
   isActive
@@ -63,7 +64,7 @@ export default function Layout({ children }) {
             </span>
           </div>
           <div className="flex-1" />
-          <div className="hidden flex-1 items-center justify-end gap-3 sm:flex">
+          <div className="hidden flex-1 items-center justify-end gap-4 sm:flex">
             <button
               type="button"
               aria-label="Chat with a stylist"
@@ -71,6 +72,7 @@ export default function Layout({ children }) {
             >
               <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />
             </button>
+            <LanguageSelector />
             {user ? (
               <>
                 <div className="relative" ref={avatarRef}>
@@ -163,6 +165,9 @@ export default function Layout({ children }) {
         </nav>
         {mobileOpen && (
           <div className="border-t border-slate-200 bg-white/90 px-4 pb-6 pt-4 sm:hidden">
+            <div className="mb-4 flex justify-start">
+              <LanguageSelector />
+            </div>
             <div className="flex flex-col gap-3 text-sm font-medium">
               {user && (
                 <NavLink to="/account" className={navLinkClass} onClick={() => setMobileOpen(false)}>
