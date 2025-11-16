@@ -33,7 +33,7 @@ export default function LanguageSelector({ onChange }) {
   }, [activeLang, onChange]);
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-[#E0E4EE] bg-white/95 px-2.5 py-1.5">
+    <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/95 px-2 py-1 shadow-[0_10px_25px_rgba(15,23,42,0.08)] backdrop-blur">
       <GlobeAltIcon className="h-4 w-4 text-slate-500" aria-hidden="true" />
       <div className="flex items-center gap-1.5">
         {languages.map((language) => {
@@ -46,10 +46,10 @@ export default function LanguageSelector({ onChange }) {
               aria-pressed={isActive}
               aria-label={`Switch to ${language.label}`}
               title={language.label}
-              className={`flex h-7 w-7 items-center justify-center rounded-full border text-[0.6rem] font-semibold uppercase tracking-[0.14em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-1 ${
+              className={`group flex h-8 w-8 items-center justify-center rounded-full border text-[0.65rem] font-semibold uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-1 ${
                 isActive
-                  ? 'border-slate-900 bg-slate-900 text-white'
-                  : 'border-[#E0E4EE] bg-white text-slate-500 hover:border-[#c7cfde] hover:text-slate-700'
+                  ? 'border-slate-900 bg-slate-900 text-white shadow-[0_10px_25px_rgba(15,23,42,0.25)]'
+                  : 'border-slate-200/80 bg-white/70 text-slate-500 hover:border-slate-300 hover:text-slate-700'
               }`}
             >
               <FlagIcon code={language.code} active={isActive} />
