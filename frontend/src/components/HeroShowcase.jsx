@@ -26,10 +26,11 @@ export default function HeroShowcase({ product, loading = false }) {
   const materials = (product.materials ?? []).slice(0, 2);
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-800 text-white shadow-xl">
+    <section className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white shadow-[0_30px_80px_rgba(15,23,42,0.6)]">
       <div className="absolute inset-0">
         <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-primary-500/40 blur-3xl" />
         <div className="absolute -right-16 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-amber-400/20 blur-3xl" />
+        <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'linear-gradient(120deg, rgba(255,255,255,0.08) 0%, transparent 60%)' }} />
       </div>
       <div className="relative grid gap-10 p-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
         <div className="max-w-xl space-y-6">
@@ -99,7 +100,7 @@ export default function HeroShowcase({ product, loading = false }) {
             </Link>
           </div>
         </div>
-        <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-white/5 shadow-2xl backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-white/5 shadow-2xl backdrop-blur-sm transition duration-700 group-hover:scale-[1.01]">
           {displayImage ? (
             <img src={displayImage} alt={product.name} className="h-full w-full object-cover" loading="lazy" />
           ) : (

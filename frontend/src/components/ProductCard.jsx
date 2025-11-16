@@ -14,15 +14,17 @@ export default function ProductCard({ product, variant = 'default' }) {
   const inventoryCount =
     typeof product.inventory === 'number' ? product.inventory : product.inventory?.quantity;
 
+  const surfaceClasses = onDark
+    ? 'border-white/15 bg-white/10 backdrop-blur before:from-white/20 before:via-transparent before:to-white/0'
+    : 'border-white/60 bg-gradient-to-br from-white/95 to-white/70 shadow-[0_20px_45px_rgba(15,23,42,0.08)] before:from-primary-50/40 before:via-white before:to-white/0';
+
   return (
     <article
-      className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${
-        onDark ? 'border-white/15 bg-white/10 backdrop-blur' : 'border-slate-200 bg-white shadow-sm'
-      } transition hover:-translate-y-1 hover:shadow-xl`}
+      className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${surfaceClasses} transition hover:-translate-y-1 hover:shadow-2xl before:absolute before:inset-0 before:-z-10 before:rounded-[22px] before:bg-gradient-to-br before:opacity-0 before:transition before:duration-500 group-hover:before:opacity-100`}
     >
       <Link
         to={`/products/${product.id}`}
-        className="relative block h-56 overflow-hidden bg-slate-100"
+        className="relative block h-56 overflow-hidden rounded-[22px] bg-slate-100"
       >
         {product.image ? (
           <img
@@ -97,7 +99,7 @@ export default function ProductCard({ product, variant = 'default' }) {
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
               onDark
                 ? 'bg-white/90 text-slate-900 hover:bg-white'
-                : 'bg-primary-600 text-white hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600'
+                : 'bg-gradient-to-r from-primary-600 to-purple-600 text-white shadow-lg shadow-primary-600/30 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600'
             }`}
           >
             Add to bag

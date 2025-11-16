@@ -51,8 +51,8 @@ export default function Layout({ children }) {
         <div className="border-b border-primary-200/40 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 py-2 text-center text-xs font-semibold uppercase tracking-[0.35em] text-white shadow-lg">
           Seasonal edit just dropped — enjoy complimentary worldwide express shipping.
         </div>
-      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/80 backdrop-blur-xl">
-        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-2xl">
+        <nav className="mx-auto mt-3 flex h-20 w-full max-w-6xl items-center justify-between rounded-full border border-white/60 bg-white/90 px-5 shadow-[0_15px_45px_rgba(15,23,42,0.12)] sm:px-8">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2 text-xl font-semibold tracking-[0.3em] text-slate-900">
               <BrandIcon size={30} />

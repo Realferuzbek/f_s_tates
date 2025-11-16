@@ -25,3 +25,13 @@ body {
 .aurora-blob {
   animation: aurora-drift var(--drift-duration, 24s) ease-in-out infinite alternate;
 }
+
+.carousel-scroll {
+  scroll-snap-type: x mandatory;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, black 80px, black calc(100% - 80px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, black 80px, black calc(100% - 80px), transparent 100%);
+}
+
+.carousel-scroll > * {
+  scroll-snap-align: start;
+}

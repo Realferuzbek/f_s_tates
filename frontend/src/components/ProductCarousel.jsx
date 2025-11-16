@@ -21,7 +21,7 @@ export default function ProductCarousel({ title, subtitle, products = [], accent
           {products.length} piece{products.length === 1 ? '' : 's'} in this drop
         </div>
       </header>
-      <div className="flex gap-5 overflow-x-auto pb-2">
+      <div className="carousel-scroll flex gap-5 overflow-x-auto pb-2">
         {products.map((product) => (
           <div key={product.id} className="w-[260px] flex-shrink-0 md:w-[300px]">
             <ProductCard product={product} variant={accent === 'dark' ? 'on-dark' : 'default'} />
