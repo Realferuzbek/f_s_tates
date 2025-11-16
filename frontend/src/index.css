@@ -9,3 +9,19 @@ body {
     #f8fafc;
   color: #0f172a;
 }
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(8%, -6%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(-6%, 10%, 0) scale(0.96);
+  }
+}
+
+.aurora-blob {
+  animation: aurora-drift var(--drift-duration, 24s) ease-in-out infinite alternate;
+}

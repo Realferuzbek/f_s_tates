@@ -4,6 +4,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import BrandIcon from './BrandIcon.jsx';
 import Seo from './Seo.jsx';
+import AuroraBackground from './AuroraBackground.jsx';
 
 const navLinkClass = ({ isActive }) =>
   isActive
@@ -43,11 +44,13 @@ export default function Layout({ children }) {
   }, [avatarOpen]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
-      <Seo />
-      <div className="border-b border-primary-200/40 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 py-2 text-center text-xs font-semibold uppercase tracking-[0.35em] text-white">
-        Seasonal edit just dropped — enjoy complimentary worldwide express shipping.
-      </div>
+    <div className="relative isolate min-h-screen bg-slate-900/5">
+      <AuroraBackground />
+      <div className="relative z-10 flex min-h-screen flex-col text-slate-900">
+        <Seo />
+        <div className="border-b border-primary-200/40 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 py-2 text-center text-xs font-semibold uppercase tracking-[0.35em] text-white shadow-lg">
+          Seasonal edit just dropped — enjoy complimentary worldwide express shipping.
+        </div>
       <header className="sticky top-0 z-40 border-b border-white/40 bg-white/80 backdrop-blur-xl">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
@@ -196,6 +199,7 @@ export default function Layout({ children }) {
           &copy; {new Date().getFullYear()} F-S Tates Marketplace • Crafted with accessibility-first design
         </p>
       </footer>
+    </div>
     </div>
   );
 }

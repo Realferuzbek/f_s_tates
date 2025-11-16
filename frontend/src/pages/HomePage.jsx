@@ -2,6 +2,7 @@ import useCuratedProducts from '../hooks/useCuratedProducts.js';
 import HeroShowcase from '../components/HeroShowcase.jsx';
 import ProductCarousel from '../components/ProductCarousel.jsx';
 import MarketplaceTable from '../components/MarketplaceTable.jsx';
+import EditorialAtmosphere from '../components/EditorialAtmosphere.jsx';
 import { marketplaceCategories } from '../data/marketplaceCategories.js';
 
 export default function HomePage() {
@@ -10,6 +11,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col gap-16">
       <MarketplaceTable categories={marketplaceCategories} />
+      <EditorialAtmosphere />
       {curated.hero && (
         <HeroShowcase
           product={curated.hero}

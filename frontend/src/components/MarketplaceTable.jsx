@@ -1,6 +1,19 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 
+const promiseStats = [
+  { label: 'Ateliers live', value: '36' },
+  { label: 'Ready-to-ship within', value: '< 72h' },
+  { label: 'Private fitting slots tonight', value: '12' }
+];
+
+const tileNotes = [
+  { label: 'Turnaround', value: '48h dispatch' },
+  { label: 'Tailoring', value: 'Complimentary' },
+  { label: 'Conscious', value: 'Traceable fibres' },
+  { label: 'Delivery', value: 'Worldwide' }
+];
+
 export default function MarketplaceTable({ categories }) {
   if (!categories?.length) {
     return null;
@@ -17,11 +30,20 @@ export default function MarketplaceTable({ categories }) {
             that sit beneath the table grid.
           </p>
           {/* TODO: add the stacked mobile treatment once the laptop layout is approved */}
+          <dl className="mt-5 grid gap-4 text-sm text-slate-600 sm:grid-cols-3">
+            {promiseStats.map((stat) => (
+              <div key={stat.label} className="rounded-2xl border border-white/80 bg-white/70 px-4 py-3 shadow-sm backdrop-blur">
+                <dt className="text-[10px] uppercase tracking-[0.35em] text-slate-400">{stat.label}</dt>
+                <dd className="mt-1 text-xl font-semibold text-slate-900">{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
         </header>
         <div className="mt-6 grid auto-rows-[200px] grid-cols-4 gap-5">
           {categories.map((category, index) => {
             const { title, subtitle, slug, accentClass, Icon, imageUrl } = category;
             const isFeatured = index === 0;
+            const note = tileNotes[index % tileNotes.length];
             return (
               <Link
                 to={`/category/${slug}`}
@@ -43,6 +65,7 @@ export default function MarketplaceTable({ categories }) {
                   )}
                   <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/85 via-white/15 to-slate-900/5" />
                 </div>
+                <span className="absolute inset-0 rounded-[28px] border border-white/30 opacity-0 transition duration-500 group-hover:opacity-100" />
                 <div className="relative z-10 flex items-start justify-between gap-4">
                   <div className="space-y-3">
                     <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500">Market table</p>
@@ -55,7 +78,11 @@ export default function MarketplaceTable({ categories }) {
                     </span>
                   )}
                 </div>
-                <div className="relative z-10 mt-8 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-slate-700">
+                <div className="relative z-10 mt-6 flex items-center justify-between text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-slate-600">
+                  <span>{note.label}</span>
+                  <span className="rounded-full bg-white/70 px-3 py-1 text-xs text-slate-900 shadow-sm">{note.value}</span>
+                </div>
+                <div className="relative z-10 mt-6 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-slate-700">
                   <span>Shop this table</span>
                   <ArrowUpRightIcon className="h-5 w-5 text-primary-500 transition group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden="true" />
                 </div>
