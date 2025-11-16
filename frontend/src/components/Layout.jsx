@@ -11,14 +11,6 @@ const navLinkClass = ({ isActive }) =>
     ? 'text-primary-600 font-semibold'
     : 'text-slate-600 transition hover:text-primary-600';
 
-const navItems = [
-  { label: 'Marketplace', to: '/' },
-  { label: 'New in', to: '/category/dresses' },
-  { label: 'Designers', to: '/category/boots' },
-  { label: 'Live ateliers', to: '/category/knitwear' },
-  { label: 'Journal', to: '/category/bags-accessories' }
-];
-
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -70,13 +62,7 @@ export default function Layout({ children }) {
               Curated marketplace
             </span>
           </div>
-          <div className="hidden flex-1 items-center justify-center gap-6 text-sm font-medium md:flex">
-            {navItems.map((item) => (
-              <NavLink key={item.label} to={item.to} className={navLinkClass}>
-                {item.label}
-              </NavLink>
-            ))}
-          </div>
+          <div className="flex-1" />
           <div className="hidden flex-1 items-center justify-end gap-3 sm:flex">
             <button
               type="button"
@@ -178,11 +164,6 @@ export default function Layout({ children }) {
         {mobileOpen && (
           <div className="border-t border-slate-200 bg-white/90 px-4 pb-6 pt-4 sm:hidden">
             <div className="flex flex-col gap-3 text-sm font-medium">
-              {navItems.map((item) => (
-                <NavLink key={item.label} to={item.to} className={navLinkClass} onClick={() => setMobileOpen(false)}>
-                  {item.label}
-                </NavLink>
-              ))}
               {user && (
                 <NavLink to="/account" className={navLinkClass} onClick={() => setMobileOpen(false)}>
                   My account

@@ -51,7 +51,6 @@ export default function MarketplaceTable({ categories }) {
     <section id="marketplace">
       <div className="rounded-[36px] border border-white/80 bg-white/90 p-6 shadow-[0_35px_80px_rgba(15,23,42,0.12)] sm:p-8">
         <header className="border-b border-slate-100 pb-6">
-          <p className="text-[11px] uppercase tracking-[0.35em] text-slate-500">Marketplace</p>
           <h2 className="mt-1 text-3xl font-semibold text-slate-900">Choose a category to start shopping</h2>
           <p className="mt-2 text-base text-slate-600">
             Browse independent ateliers by category, delivery speed, and fitting options. Toggle filters to narrow the grid
