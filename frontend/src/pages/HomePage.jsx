@@ -6,6 +6,8 @@ import SearchFilters from '../components/SearchFilters.jsx';
 import HeroShowcase from '../components/HeroShowcase.jsx';
 import ProductCarousel from '../components/ProductCarousel.jsx';
 import BrandIcon from '../components/BrandIcon.jsx';
+import CategoryCard from '../components/CategoryCard.jsx';
+import { marketplaceCategories } from '../data/marketplaceCategories.js';
 
 const brandHighlights = [
   {
@@ -110,15 +112,15 @@ export default function HomePage() {
         <aside aria-label="Filters" className="lg:sticky lg:top-24 lg:self-start">
           <SearchFilters onChange={handleFiltersChange} />
         </aside>
-        <div className="grid gap-6">
+        <div className="grid gap-8">
           <header className="grid gap-2">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Boutique edit</p>
-              <h1 className="text-3xl font-semibold text-slate-900">The season&apos;s considered wardrobe</h1>
+              <h1 className="text-3xl font-semibold text-slate-900">Choose your table, then refine</h1>
             </div>
             <p className="text-sm text-slate-600">
-              Explore limited-run pieces across womenswear, menswear, and accessories. Every item is in stock now and
-              ready to ship worldwide.
+              On desktop the marketplace opens as a field of curated categories—select an atelier focus and keep the left
+              filters engaged to narrow future drops.
             </p>
             {activeFilterChips.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-2">
@@ -133,6 +135,17 @@ export default function HomePage() {
               </div>
             )}
           </header>
+          <section className="hidden flex-col gap-4 lg:flex">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Marketplace tables</p>
+              <span className="text-sm text-slate-500">Each capsule links to a focused landing page—more data coming soon.</span>
+            </div>
+            <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {marketplaceCategories.map((category) => (
+                <CategoryCard key={category.slug} category={category} />
+              ))}
+            </div>
+          </section>
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (

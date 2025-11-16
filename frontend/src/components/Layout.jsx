@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Bars3Icon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { useEffect, useRef, useState } from 'react';
+import { Bars3Icon, ChatBubbleLeftRightIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
@@ -16,11 +16,33 @@ export default function Layout({ children }) {
   const { cartCount } = useCart();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [avatarOpen, setAvatarOpen] = useState(false);
+  const avatarRef = useRef(null);
 
   const handleLogout = () => {
+    setAvatarOpen(false);
     logout();
     navigate('/');
   };
+
+  useEffect(() => {
+    if (!avatarOpen) return undefined;
+    const handleOutsideClick = (event) => {
+      if (!avatarRef.current || avatarRef.current.contains(event.target)) return;
+      setAvatarOpen(false);
+    };
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setAvatarOpen(false);
+      }
+    };
+    window.addEventListener('pointerdown', handleOutsideClick);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('pointerdown', handleOutsideClick);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [avatarOpen]);
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
@@ -65,6 +87,35 @@ export default function Layout({ children }) {
             )}
           </div>
           <div className="hidden items-center gap-4 sm:flex">
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-600 transition hover:border-primary-300 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
+            >
+              <ChatBubbleLeftRightIcon className="h-4 w-4" aria-hidden="true" />
+              Chat
+            </button>
+            <div className="relative" ref={avatarRef}>
+              <button
+                type="button"
+                onClick={() => setAvatarOpen((open) => !open)}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold uppercase tracking-[0.3em] text-slate-700 shadow-sm transition hover:border-primary-300 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
+                aria-haspopup="menu"
+                aria-expanded={avatarOpen}
+              >
+                FS
+              </button>
+              {avatarOpen && (
+                <div className="absolute right-0 z-40 mt-3 w-40 rounded-2xl border border-slate-200 bg-white/95 p-3 text-sm shadow-2xl ring-1 ring-black/5">
+                  <p className="text-[10px] uppercase tracking-[0.35em] text-slate-400">Profile</p>
+                  <button
+                    type="button"
+                    className="mt-2 w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Settings
+                  </button>
+                </div>
+              )}
+            </div>
             {user ? (
               <button
                 onClick={handleLogout}

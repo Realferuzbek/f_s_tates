@@ -19,7 +19,7 @@ A full-stack fashion marketplace inspired by elevated online destinations. The e
 
 ## Project structure
 
-```
+
 frontend/   # React single-page application powered by Vite and Tailwind
 backend/    # Express API with Prisma models, authentication, and business logic
 ```

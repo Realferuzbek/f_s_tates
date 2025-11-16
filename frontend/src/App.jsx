@@ -9,12 +9,14 @@ import OrdersPage from './pages/OrdersPage.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import RequireAuth from './components/RequireAuth.jsx';
+import CategoryLandingPage from './pages/CategoryLandingPage.jsx';
 
 export default function App() {
   return (
     <Layout>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/category/:slug" element={<CategoryLandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/products/:productId" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
