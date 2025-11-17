@@ -7,6 +7,7 @@ const MobileExperienceContext = createContext({
   activeTab: 'marketplace',
   goToTab: noop,
   openChatThread: noop,
+  openOrderChat: noop,
   openSupportChat: noop,
   promptProfile: noop
 });

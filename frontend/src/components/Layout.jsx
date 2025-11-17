@@ -3,6 +3,7 @@ import { Bars3Icon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { MobileExperienceProvider } from '../context/MobileExperienceContext.jsx';
+import useAnalytics from '../hooks/useAnalytics.js';
 import BrandIcon from './BrandIcon.jsx';
 import Seo from './Seo.jsx';
 import AuroraBackground from './AuroraBackground.jsx';
@@ -26,6 +27,7 @@ export default function Layout({ children }) {
   const [activeMobileTab, setActiveMobileTab] = useState('marketplace');
   const [chatUnread, setChatUnread] = useState(true);
   const [chatFocusThread, setChatFocusThread] = useState(null);
+  const [chatFocusOrderId, setChatFocusOrderId] = useState(null);
   const [profilePrompt, setProfilePrompt] = useState(null);
   const avatarRef = useRef(null);
   const scrollPositionsRef = useRef({
@@ -34,6 +36,7 @@ export default function Layout({ children }) {
     profile: 0
   });
   const isMobile = useIsMobile();
+  const trackEvent = useAnalytics();
 
   const handleLogout = () => {
     setAvatarOpen(false);
@@ -66,6 +69,16 @@ export default function Layout({ children }) {
     }
   }, [isMobile]);
 
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+    trackEvent('mobile_screen_viewed', {
+      screen: `mobile_${activeMobileTab}`,
+      properties: { tab: activeMobileTab }
+    });
+  }, [activeMobileTab, isMobile, trackEvent]);
+
   const changeMobileTab = useCallback(
     (nextTab, options = {}) => {
       if (!isMobile) {
@@ -74,11 +87,18 @@ export default function Layout({ children }) {
       setActiveMobileTab((previous) => {
         if (previous !== nextTab && typeof window !== 'undefined') {
           scrollPositionsRef.current[previous] = window.scrollY;
+          trackEvent('mobile_tab_changed', {
+            screen: `mobile_${previous}`,
+            properties: { from_tab: previous, to_tab: nextTab }
+          });
         }
         return nextTab;
       });
       if (options.focusThreadId) {
         setChatFocusThread(options.focusThreadId);
+      }
+      if (options.focusOrderId) {
+        setChatFocusOrderId(options.focusOrderId);
       }
       if (options.profilePrompt) {
         setProfilePrompt(options.profilePrompt);
@@ -95,7 +115,7 @@ export default function Layout({ children }) {
         }
       }
     },
-    [isMobile]
+    [isMobile, trackEvent]
   );
 
   const experienceValue = useMemo(
@@ -104,6 +124,7 @@ export default function Layout({ children }) {
       activeTab: activeMobileTab,
       goToTab: (tab, options = {}) => changeMobileTab(tab, options),
       openChatThread: (threadId) => changeMobileTab('chat', { focusThreadId: threadId }),
+      openOrderChat: (orderId) => changeMobileTab('chat', { focusOrderId: orderId }),
       openSupportChat: () => changeMobileTab('chat', { focusThreadId: 'support' }),
       promptProfile: (message) => changeMobileTab('profile', { profilePrompt: message })
     }),
@@ -112,8 +133,13 @@ export default function Layout({ children }) {
 
   const chatPanel = (
     <MobileChatPanel
+      isActive={activeMobileTab === 'chat'}
       focusThreadId={chatFocusThread}
-      onFocusConsumed={() => setChatFocusThread(null)}
+      focusOrderId={chatFocusOrderId}
+      onFocusConsumed={() => {
+        setChatFocusThread(null);
+        setChatFocusOrderId(null);
+      }}
       onUnreadChange={setChatUnread}
     />
   );

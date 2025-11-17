@@ -20,9 +20,23 @@ enum OrderStatus {
   CANCELLED
 }
 
-enum PaymentMethod {
-  card
-  paypal
+enum PaymentMethodType {
+  CARD
+  PAYPAL
+}
+
+enum ChatSenderType {
+  SYSTEM
+  ADMIN
+  USER
+}
+
+enum MessageKind {
+  TEXT
+  ORDER_STATUS
+  CODE
+  REFUND
+  NOTE
 }
 
 enum Audience {
@@ -37,12 +51,19 @@ model User {
   name            String
   email           String    @unique
   password        String
+  phone           String?
   role            Role      @default(CUSTOMER)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   orders          Order[]
   cart            Cart?
   defaultShipping Json?
+  addresses       Address[]
+  paymentMethods  PaymentInstrument[]
+  notificationPreference NotificationPreference?
+  profileSetting  ProfileSetting?
+  conversations   Conversation[]
+  events          Event[]
 }
 
 model Category {
@@ -117,11 +138,12 @@ model Order {
   user            User         @relation(fields: [userId], references: [id])
   total           Decimal      @db.Decimal(10, 2)
   status          OrderStatus  @default(PLACED)
-  paymentMethod   PaymentMethod
+  paymentMethod   PaymentMethodType
   shippingAddress Json
   items           OrderItem[]
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
+  conversations   Conversation[]
 }
 
 model OrderItem {
@@ -134,4 +156,98 @@ model OrderItem {
   unitPrice Decimal  @db.Decimal(10, 2)
   selectedSize  String?
   selectedColor String?
+}
+
+model Address {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  label              String
+  line1              String
+  line2              String?
+  city               String
+  postalCode         String
+  country            String
+  isDefaultShipping  Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model PaymentInstrument {
+  id                        String   @id @default(cuid())
+  userId                    String
+  user                      User     @relation(fields: [userId], references: [id])
+  provider                  String
+  brand                     String?
+  last4                     String
+  expiresMonth              Int
+  expiresYear               Int
+  providerPaymentMethodId   String
+  isDefault                 Boolean  @default(false)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}
+
+model NotificationPreference {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  orderUpdatesEmail   Boolean  @default(true)
+  orderUpdatesPush    Boolean  @default(true)
+  promotionsEmail     Boolean  @default(false)
+  promotionsPush      Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model ProfileSetting {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  language  String   @default("en")
+  currency  String   @default("USD")
+  region    String   @default("United States")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Conversation {
+  id                  String    @id @default(cuid())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id])
+  orderId             String?
+  order               Order?    @relation(fields: [orderId], references: [id])
+  title               String
+  lastMessagePreview  String?
+  lastMessageAt       DateTime?
+  unreadForUser       Int       @default(0)
+  unreadForAdmin      Int       @default(0)
+  isSupport           Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  messages            Message[]
+}
+
+model Message {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   Conversation   @relation(fields: [conversationId], references: [id])
+  senderType     ChatSenderType
+  senderId       String?
+  kind           MessageKind    @default(TEXT)
+  text           String?
+  payload        Json?
+  createdAt      DateTime       @default(now())
+  readByUser     DateTime?
+  readByAdmin    DateTime?
+}
+
+model Event {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  sessionId  String
+  eventType  String
+  screen     String?
+  properties Json?
+  createdAt  DateTime @default(now())
 }

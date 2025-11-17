@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -31,6 +31,54 @@ async function main() {
         city: 'Commerce City',
         postalCode: '12345'
       }
+    }
+  });
+
+  await prisma.address.create({
+    data: {
+      userId: customer.id,
+      label: 'Home',
+      line1: '123 Market Street',
+      city: 'Commerce City',
+      postalCode: '12345',
+      country: 'United States',
+      isDefaultShipping: true
+    }
+  });
+
+  await prisma.paymentInstrument.create({
+    data: {
+      userId: customer.id,
+      provider: 'stripe',
+      brand: 'Visa',
+      last4: '4242',
+      expiresMonth: 12,
+      expiresYear: new Date().getFullYear() + 3,
+      providerPaymentMethodId: 'pm_seed_4242',
+      isDefault: true
+    }
+  });
+
+  await prisma.notificationPreference.upsert({
+    where: { userId: customer.id },
+    update: {},
+    create: {
+      userId: customer.id,
+      orderUpdatesEmail: true,
+      orderUpdatesPush: true,
+      promotionsEmail: false,
+      promotionsPush: false
+    }
+  });
+
+  await prisma.profileSetting.upsert({
+    where: { userId: customer.id },
+    update: {},
+    create: {
+      userId: customer.id,
+      language: 'en',
+      currency: 'USD',
+      region: 'United States'
     }
   });
 
@@ -357,7 +405,7 @@ async function main() {
     }
   ];
 
-  await Promise.all(
+  const seededProducts = await Promise.all(
     products.map((product) =>
       prisma.product.upsert({
         where: { sku: product.sku },
@@ -394,6 +442,91 @@ async function main() {
       })
     )
   );
+
+  if (seededProducts.length > 0) {
+    const orderItemsData = seededProducts.slice(0, 2).map((product) => ({
+      productId: product.id,
+      quantity: 1,
+      unitPrice: product.price,
+      selectedSize: product.sizeOptions?.[0] ?? null,
+      selectedColor: product.colorOptions?.[0] ?? null
+    }));
+    const total = orderItemsData.reduce((sum, item) => sum + Number(item.unitPrice), 0);
+    const order = await prisma.order.create({
+      data: {
+        userId: customer.id,
+        total: new Prisma.Decimal(total.toFixed(2)),
+        status: 'PROCESSING',
+        paymentMethod: 'CARD',
+        shippingAddress: {
+          fullName: 'Sample Customer',
+          address: '123 Market Street',
+          city: 'Commerce City',
+          postalCode: '12345'
+        },
+        items: {
+          create: orderItemsData
+        }
+      },
+      include: { items: { include: { product: true } } }
+    });
+
+    const primaryProduct = order.items[0]?.product;
+    const conversationTitle = primaryProduct
+      ? `Order #${order.id.slice(-4).toUpperCase()} · ${primaryProduct.name}`
+      : `Order #${order.id.slice(-4).toUpperCase()}`;
+
+    await prisma.conversation.create({
+      data: {
+        userId: customer.id,
+        orderId: order.id,
+        title: conversationTitle,
+        lastMessagePreview: 'Payment confirmed.',
+        lastMessageAt: new Date(),
+        unreadForUser: 2,
+        messages: {
+          create: [
+            {
+              senderType: 'SYSTEM',
+              kind: 'ORDER_STATUS',
+              text: "We've received your order.",
+              payload: { event: 'ORDER_PLACED', orderId: order.id },
+              readByAdmin: new Date()
+            },
+            {
+              senderType: 'SYSTEM',
+              kind: 'ORDER_STATUS',
+              text: 'Payment confirmed.',
+              payload: { event: 'PAYMENT_CONFIRMED', orderId: order.id },
+              readByAdmin: new Date()
+            }
+          ]
+        }
+      }
+    });
+
+    await prisma.conversation.create({
+      data: {
+        userId: customer.id,
+        isSupport: true,
+        title: 'Concierge support',
+        lastMessagePreview: 'Our atelier is online 24/7.',
+        lastMessageAt: new Date(Date.now() - 1000 * 60 * 60 * 6),
+        unreadForUser: 0,
+        messages: {
+          create: [
+            {
+              senderType: 'ADMIN',
+              kind: 'NOTE',
+              text: 'Our atelier is online 24/7.',
+              readByAdmin: new Date(),
+              readByUser: new Date()
+            }
+          ]
+        }
+      }
+    });
+  }
 
   console.log(`Seeded admin ${admin.email} and customer ${customer.email}`);
 }

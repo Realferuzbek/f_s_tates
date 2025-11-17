@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowPathRoundedSquareIcon,
   ArrowRightIcon,
@@ -15,6 +15,8 @@ import { marketplaceCategories } from '../../data/marketplaceCategories.js';
 import { useCart } from '../../context/CartContext.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useMobileExperience } from '../../context/MobileExperienceContext.jsx';
+import useAnalytics from '../../hooks/useAnalytics.js';
+import apiClient from '../../utils/apiClient.js';
 import { getColorSwatchClass } from '../../utils/palette.js';
 
 const audiences = [
@@ -71,6 +73,13 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
   maximumFractionDigits: 0
 });
+
+const orderStatusLabels = {
+  PLACED: 'Placed',
+  PROCESSING: 'Processing',
+  SHIPPED: 'Shipped',
+  DELIVERED: 'Delivered'
+};
 
 function MobileSheet({ title, onClose, children, footer }) {
   return (
@@ -175,8 +184,9 @@ function ProductListItem({ product, onRequireProfile }) {
 
 export default function MobileMarketplacePanel({ curatedData = null }) {
   const { cartCount } = useCart();
-  const { user } = useAuth();
-  const { openChatThread, promptProfile } = useMobileExperience();
+  const { user, token } = useAuth();
+  const { openOrderChat, openSupportChat, promptProfile } = useMobileExperience();
+  const trackEvent = useAnalytics();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeAudience, setActiveAudience] = useState('women');
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -189,7 +199,32 @@ export default function MobileMarketplacePanel({ curatedData = null }) {
   const [visibleCount, setVisibleCount] = useState(6);
   const [activeSheet, setActiveSheet] = useState(null);
   const [categoryFlash, setCategoryFlash] = useState(false);
+  const [latestOrder, setLatestOrder] = useState(null);
+  const [ordersLoading, setOrdersLoading] = useState(false);
   const feedSectionRef = useRef(null);
+  useEffect(() => {
+    if (!user) {
+      setLatestOrder(null);
+      return;
+    }
+    const authToken = typeof token === 'function' ? token() : null;
+    if (!authToken) {
+      return;
+    }
+    setOrdersLoading(true);
+    apiClient
+      .get('/account/orders', {
+        params: { limit: 1 },
+        headers: { Authorization: `Bearer ${authToken}` }
+      })
+      .then((response) => {
+        setLatestOrder(response.data.orders?.[0] ?? null);
+      })
+      .catch(() => {
+        setLatestOrder(null);
+      })
+      .finally(() => setOrdersLoading(false));
+  }, [token, user]);
 
   const heroSlides = useMemo(() => {
     if (curatedHero) {
@@ -261,6 +296,10 @@ export default function MobileMarketplacePanel({ curatedData = null }) {
     setVisibleCount(6);
     setCategoryFlash(true);
     setActiveSheet(null);
+    trackEvent('marketplace_category_clicked', {
+      screen: 'mobile_marketplace',
+      properties: { category_slug: slug }
+    });
     setTimeout(() => setCategoryFlash(false), 450);
     if (feedSectionRef.current && typeof window !== 'undefined') {
       const rect = feedSectionRef.current.getBoundingClientRect();
@@ -273,6 +312,22 @@ export default function MobileMarketplacePanel({ curatedData = null }) {
     if (!user) {
       promptProfile('Sign in to save favourites and checkout faster');
     }
+  };
+
+  const handleViewMessages = () => {
+    if (!user) {
+      promptProfile('Sign in to view your concierge messages');
+      return;
+    }
+    if (!latestOrder) {
+      promptProfile('Finish checkout to unlock message threads for your orders');
+      return;
+    }
+    trackEvent('marketplace_view_messages_clicked', {
+      screen: 'mobile_marketplace',
+      properties: { order_id: latestOrder.id }
+    });
+    openOrderChat(latestOrder.id);
   };
 
   const resetFilters = () => {
@@ -509,7 +564,13 @@ export default function MobileMarketplacePanel({ curatedData = null }) {
             <button
               type="button"
               className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-slate-500"
-              onClick={() => openChatThread('support')}
+              onClick={() => {
+                trackEvent('support_contact_opened', {
+                  screen: 'mobile_marketplace',
+                  properties: { entry_point: 'marketplace' }
+                });
+                openSupportChat();
+              }}
             >
               Help
             </button>
@@ -532,7 +593,7 @@ export default function MobileMarketplacePanel({ curatedData = null }) {
                         if (slide.categorySlug) {
                           handleCategorySelect(slide.categorySlug);
                         } else if (slide.productId) {
-                          openChatThread('order-8472');
+                          handleViewMessages();
                         }
                       }}
                     >
@@ -599,12 +660,20 @@ export default function MobileMarketplacePanel({ curatedData = null }) {
           </div>
           <p className="mt-2 text-base font-semibold text-slate-900">Orders drop messages straight into Chat.</p>
           <p className="mt-1 text-sm text-slate-600">View access codes, delivery notes, and support threads after checkout.</p>
+          {latestOrder && (
+            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.3em] text-primary-500">
+              Latest: #{latestOrder.id.slice(-4).toUpperCase()} · {orderStatusLabels[latestOrder.status] ?? latestOrder.status}
+            </p>
+          )}
           <button
             type="button"
-            onClick={() => openChatThread('order-8472')}
-            className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.35em] text-white"
+            onClick={handleViewMessages}
+            disabled={ordersLoading}
+            className={`mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.35em] text-white ${
+              ordersLoading ? 'cursor-wait bg-slate-400' : 'bg-slate-900'
+            }`}
           >
-            View messages
+            {ordersLoading ? 'Loading' : 'View messages'}
             <ArrowRightIcon className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
@@ -616,7 +685,13 @@ export default function MobileMarketplacePanel({ curatedData = null }) {
                 <button
                   type="button"
                   className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-600"
-                  onClick={() => setActiveSheet('filters')}
+                  onClick={() => {
+                    trackEvent('marketplace_filters_opened', {
+                      screen: 'mobile_marketplace',
+                      properties: { source: 'filters_bar' }
+                    });
+                    setActiveSheet('filters');
+                  }}
                 >
                   <FunnelIcon className="h-4 w-4" aria-hidden="true" />
                   Filters

@@ -2,6 +2,7 @@ import { prisma } from '../app.js';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { serializeOrder } from '../utils/serializers.js';
+import { bootstrapOrderConversation, ensureSupportConversation } from '../utils/chatService.js';
 
 const checkoutSchema = z.object({
   shippingAddress: z.object({
@@ -32,12 +33,14 @@ export async function checkout(req, res, next) {
       0
     );
 
+    const paymentMethod = payload.payment.method.toUpperCase();
+
     const order = await prisma.order.create({
       data: {
         userId: req.user.id,
         total: new Prisma.Decimal(total.toFixed(2)),
         status: 'PLACED',
-        paymentMethod: payload.payment.method,
+        paymentMethod,
         shippingAddress: payload.shippingAddress,
         items: {
           create: cart.items.map((item) => ({
@@ -53,6 +56,8 @@ export async function checkout(req, res, next) {
     });
 
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+    await ensureSupportConversation(req.user.id);
+    await bootstrapOrderConversation(order);
 
     res.status(201).json({ order: serializeOrder(order) });
   } catch (error) {
