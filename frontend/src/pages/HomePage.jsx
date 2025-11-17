@@ -1,11 +1,18 @@
 import useCuratedProducts from '../hooks/useCuratedProducts.js';
+import useIsMobile from '../hooks/useIsMobile.js';
 import HeroShowcase from '../components/HeroShowcase.jsx';
 import ProductCarousel from '../components/ProductCarousel.jsx';
 import MarketplaceTable from '../components/MarketplaceTable.jsx';
 import { marketplaceCategories } from '../data/marketplaceCategories.js';
+import MobileMarketplacePanel from '../components/mobile/MobileMarketplacePanel.jsx';
 
 export default function HomePage() {
+  const isMobile = useIsMobile();
   const { data: curated, loading: curatedLoading } = useCuratedProducts();
+
+  if (isMobile) {
+    return <MobileMarketplacePanel curatedData={curated} />;
+  }
 
   return (
     <div className="flex flex-col gap-16">

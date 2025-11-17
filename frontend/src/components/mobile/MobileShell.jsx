@@ -5,7 +5,8 @@ export default function MobileShell({
   onTabChange,
   marketplaceContent,
   chatContent,
-  profileContent
+  profileContent,
+  chatUnread = false
 }) {
   return (
     <div className="relative md:hidden">
@@ -20,7 +21,7 @@ export default function MobileShell({
           {profileContent}
         </div>
       </div>
-      <MobileBottomNav activeTab={activeTab} onChange={onTabChange} />
+      <MobileBottomNav activeTab={activeTab} onChange={onTabChange} chatUnread={chatUnread} />
     </div>
   );
 }

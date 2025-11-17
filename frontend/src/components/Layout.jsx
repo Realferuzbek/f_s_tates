@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bars3Icon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { MobileExperienceProvider } from '../context/MobileExperienceContext.jsx';
 import BrandIcon from './BrandIcon.jsx';
 import Seo from './Seo.jsx';
 import AuroraBackground from './AuroraBackground.jsx';
@@ -23,7 +24,15 @@ export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [activeMobileTab, setActiveMobileTab] = useState('marketplace');
+  const [chatUnread, setChatUnread] = useState(true);
+  const [chatFocusThread, setChatFocusThread] = useState(null);
+  const [profilePrompt, setProfilePrompt] = useState(null);
   const avatarRef = useRef(null);
+  const scrollPositionsRef = useRef({
+    marketplace: 0,
+    chat: 0,
+    profile: 0
+  });
   const isMobile = useIsMobile();
 
   const handleLogout = () => {
@@ -57,16 +66,81 @@ export default function Layout({ children }) {
     }
   }, [isMobile]);
 
+  const changeMobileTab = useCallback(
+    (nextTab, options = {}) => {
+      if (!isMobile) {
+        return;
+      }
+      setActiveMobileTab((previous) => {
+        if (previous !== nextTab && typeof window !== 'undefined') {
+          scrollPositionsRef.current[previous] = window.scrollY;
+        }
+        return nextTab;
+      });
+      if (options.focusThreadId) {
+        setChatFocusThread(options.focusThreadId);
+      }
+      if (options.profilePrompt) {
+        setProfilePrompt(options.profilePrompt);
+      }
+      if (typeof window !== 'undefined') {
+        const restoreScroll = () => {
+          const stored = scrollPositionsRef.current[nextTab] ?? 0;
+          window.scrollTo({ top: stored, behavior: stored > 24 ? 'smooth' : 'auto' });
+        };
+        if (typeof window.requestAnimationFrame === 'function') {
+          window.requestAnimationFrame(restoreScroll);
+        } else {
+          restoreScroll();
+        }
+      }
+    },
+    [isMobile]
+  );
+
+  const experienceValue = useMemo(
+    () => ({
+      isMobile,
+      activeTab: activeMobileTab,
+      goToTab: (tab, options = {}) => changeMobileTab(tab, options),
+      openChatThread: (threadId) => changeMobileTab('chat', { focusThreadId: threadId }),
+      openSupportChat: () => changeMobileTab('chat', { focusThreadId: 'support' }),
+      promptProfile: (message) => changeMobileTab('profile', { profilePrompt: message })
+    }),
+    [activeMobileTab, changeMobileTab, isMobile]
+  );
+
+  const chatPanel = (
+    <MobileChatPanel
+      focusThreadId={chatFocusThread}
+      onFocusConsumed={() => setChatFocusThread(null)}
+      onUnreadChange={setChatUnread}
+    />
+  );
+
+  const profilePanel = (
+    <MobileProfilePanel
+      promptMessage={profilePrompt}
+      onPromptClear={() => setProfilePrompt(null)}
+      onContactSupport={() => changeMobileTab('chat', { focusThreadId: 'support' })}
+    />
+  );
+
   const renderedMainContent = isMobile ? (
     <MobileShell
       activeTab={activeMobileTab}
-      onTabChange={setActiveMobileTab}
+      onTabChange={changeMobileTab}
       marketplaceContent={children}
-      chatContent={<MobileChatPanel />}
-      profileContent={<MobileProfilePanel />}
+      chatContent={chatPanel}
+      profileContent={profilePanel}
+      chatUnread={chatUnread}
     />
   ) : (
     children
+  );
+
+  const contentWithProvider = (
+    <MobileExperienceProvider value={experienceValue}>{renderedMainContent}</MobileExperienceProvider>
   );
 
   return (
@@ -240,7 +314,7 @@ export default function Layout({ children }) {
           </div>
         </header>
         <main className="flex-1">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{renderedMainContent}</div>
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{contentWithProvider}</div>
         </main>
         <footer className="mt-14 border-t border-slate-200/60 bg-gradient-to-b from-white/95 via-slate-50 to-slate-100/60 pt-12 pb-28 text-sm text-slate-500 md:pb-12">
           <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:grid-cols-3 sm:px-6 lg:px-8">

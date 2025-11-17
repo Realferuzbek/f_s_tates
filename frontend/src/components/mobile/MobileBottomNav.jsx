@@ -6,7 +6,7 @@ const tabs = [
   { id: 'profile', label: 'Profile', icon: UserCircleIcon }
 ];
 
-export default function MobileBottomNav({ activeTab, onChange }) {
+export default function MobileBottomNav({ activeTab, onChange, chatUnread = false }) {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200/90 bg-white/95 shadow-[0_-10px_35px_rgba(15,23,42,0.08)] backdrop-blur-md md:hidden"
@@ -23,7 +23,12 @@ export default function MobileBottomNav({ activeTab, onChange }) {
               className="flex flex-1 flex-col items-center gap-1 text-xs font-semibold uppercase tracking-[0.18em]"
               aria-current={isActive ? 'page' : undefined}
             >
-              <tab.icon className={`h-6 w-6 ${isActive ? 'text-primary-600' : 'text-slate-400'}`} aria-hidden="true" />
+              <span className="relative">
+                <tab.icon className={`h-6 w-6 ${isActive ? 'text-primary-600' : 'text-slate-400'}`} aria-hidden="true" />
+                {tab.id === 'chat' && chatUnread && (
+                  <span className="absolute -top-1 -right-0.5 inline-flex h-2.5 w-2.5 rounded-full bg-primary-500 shadow ring-2 ring-white" />
+                )}
+              </span>
               <span className={isActive ? 'text-primary-600' : 'text-slate-400'}>{tab.label}</span>
             </button>
           );
