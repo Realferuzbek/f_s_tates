@@ -7,6 +7,10 @@ import Seo from './Seo.jsx';
 import AuroraBackground from './AuroraBackground.jsx';
 import LanguageSelector from './LanguageSelector.jsx';
 import AccessibilityWidget from './AccessibilityWidget.jsx';
+import useIsMobile from '../hooks/useIsMobile.js';
+import MobileShell from './mobile/MobileShell.jsx';
+import MobileChatPanel from './mobile/MobileChatPanel.jsx';
+import MobileProfilePanel from './mobile/MobileProfilePanel.jsx';
 
 const navLinkClass = ({ isActive }) =>
   isActive
@@ -18,7 +22,9 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
+  const [activeMobileTab, setActiveMobileTab] = useState('marketplace');
   const avatarRef = useRef(null);
+  const isMobile = useIsMobile();
 
   const handleLogout = () => {
     setAvatarOpen(false);
@@ -44,6 +50,24 @@ export default function Layout({ children }) {
       window.removeEventListener('keydown', handleEscape);
     };
   }, [avatarOpen]);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setActiveMobileTab('marketplace');
+    }
+  }, [isMobile]);
+
+  const renderedMainContent = isMobile ? (
+    <MobileShell
+      activeTab={activeMobileTab}
+      onTabChange={setActiveMobileTab}
+      marketplaceContent={children}
+      chatContent={<MobileChatPanel />}
+      profileContent={<MobileProfilePanel />}
+    />
+  ) : (
+    children
+  );
 
   return (
     <div className="relative isolate min-h-screen bg-slate-900/5">
@@ -216,9 +240,9 @@ export default function Layout({ children }) {
           </div>
         </header>
         <main className="flex-1">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{children}</div>
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{renderedMainContent}</div>
         </main>
-        <footer className="mt-14 border-t border-slate-200/60 bg-gradient-to-b from-white/95 via-slate-50 to-slate-100/60 py-12 text-sm text-slate-500">
+        <footer className="mt-14 border-t border-slate-200/60 bg-gradient-to-b from-white/95 via-slate-50 to-slate-100/60 pt-12 pb-28 text-sm text-slate-500 md:pb-12">
           <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:grid-cols-3 sm:px-6 lg:px-8">
             <div>
               <div className="flex items-center gap-2">
