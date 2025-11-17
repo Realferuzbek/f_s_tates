@@ -279,7 +279,7 @@ export default function MobileProfilePanel({ promptMessage, onPromptClear, onCon
           </button>
         </div>
         {loading && orders.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">Loading your recent orders…</p>
+        <p className="mt-4 text-sm text-slate-500">Loading your recent orders...</p>
         ) : ordersPreview.length > 0 ? (
           <div className="mt-3 space-y-3">
             {ordersPreview.map((order) => (
@@ -437,7 +437,7 @@ export default function MobileProfilePanel({ promptMessage, onPromptClear, onCon
             </div>
           </div>
         ) : (
-          <p className="mt-4 text-sm text-slate-500">Loading your notification preferences…</p>
+        <p className="mt-4 text-sm text-slate-500">Loading your notification preferences...</p>
         )}
       </div>
 

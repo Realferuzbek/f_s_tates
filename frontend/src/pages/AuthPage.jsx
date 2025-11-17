@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 export default function AuthPage() {
   const { login, register: registerUser } = useAuth();
@@ -9,6 +10,7 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('login');
   const [errorMessage, setErrorMessage] = useState('');
+  const { t } = useLanguage();
   const {
     register,
     handleSubmit,
@@ -26,7 +28,7 @@ export default function AuthPage() {
       const redirectTo = location.state?.from?.pathname || '/';
       navigate(redirectTo, { replace: true });
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'Authentication failed');
+      setErrorMessage(error.response?.data?.message || t('auth.error'));
     }
   };
 
@@ -34,40 +36,43 @@ export default function AuthPage() {
     <div className="mx-auto w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
       <header className="mb-6 text-center">
         <h1 className="text-2xl font-semibold text-slate-900">
-          {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
+          {mode === 'login' ? t('Sign in to your account') : t('Create your account')}
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Access personalized recommendations, order history, and saved preferences.
+          {t('Access personalized recommendations, order history, and saved preferences.')}
         </p>
       </header>
       <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
         {mode === 'register' && (
           <label className="grid gap-1 text-sm">
-            <span className="font-medium text-slate-700">Full name</span>
+            <span className="font-medium text-slate-700">{t('Full name')}</span>
             <input
               type="text"
-              {...register('name', { required: 'Name is required' })}
+              {...register('name', { required: t('Name is required') })}
               className="rounded-md border border-slate-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
             />
             {errors.name && <span className="text-xs text-red-600">{errors.name.message}</span>}
           </label>
         )}
         <label className="grid gap-1 text-sm">
-          <span className="font-medium text-slate-700">Email</span>
+          <span className="font-medium text-slate-700">{t('Email')}</span>
           <input
             type="email"
             autoComplete="email"
-            {...register('email', { required: 'Email is required' })}
+            {...register('email', { required: t('Email is required') })}
             className="rounded-md border border-slate-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
           />
           {errors.email && <span className="text-xs text-red-600">{errors.email.message}</span>}
         </label>
         <label className="grid gap-1 text-sm">
-          <span className="font-medium text-slate-700">Password</span>
+          <span className="font-medium text-slate-700">{t('Password')}</span>
           <input
             type="password"
             autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Use at least 6 characters' } })}
+            {...register('password', {
+              required: t('Password is required'),
+              minLength: { value: 6, message: t('Use at least 6 characters') }
+            })}
             className="rounded-md border border-slate-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
           />
           {errors.password && <span className="text-xs text-red-600">{errors.password.message}</span>}
@@ -77,16 +82,16 @@ export default function AuthPage() {
           type="submit"
           className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500"
         >
-          {mode === 'login' ? 'Sign in' : 'Create account'}
+          {mode === 'login' ? t('Sign in') : t('Create account')}
         </button>
       </form>
       <p className="mt-6 text-center text-sm text-slate-600">
-        {mode === 'login' ? 'New to the marketplace?' : 'Already have an account?'}{' '}
+        {mode === 'login' ? t('New to the marketplace?') : t('Already have an account?')}{' '}
         <button
           onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
           className="font-medium text-primary-600 hover:text-primary-500"
         >
-          {mode === 'login' ? 'Create an account' : 'Sign in'}
+          {mode === 'login' ? t('Create an account') : t('Sign in')}
         </button>
       </p>
     </div>

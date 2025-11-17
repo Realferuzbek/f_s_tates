@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
 import { getColorSwatchClass } from '../utils/palette.js';
 import BrandIcon from './BrandIcon.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 function formatTitleCase(value) {
   return value.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 export default function HeroShowcase({ product, loading = false }) {
+  const { t } = useLanguage();
+
   if (loading || !product) {
     return (
       <section className="relative overflow-hidden rounded-3xl bg-slate-900/80 p-10 text-white shadow-xl">
@@ -36,7 +39,7 @@ export default function HeroShowcase({ product, loading = false }) {
         <div className="max-w-xl space-y-6">
           <div className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.35em] text-white/70">
             <BrandIcon size={28} className="drop-shadow-[0_6px_12px_rgba(0,0,0,0.2)]" label="F-S Tates monogram" />
-            <span>Featured drop</span>
+            <span>{t('Featured drop')}</span>
             <span className="h-px flex-1 bg-white/20" aria-hidden="true" />
           </div>
           <div className="space-y-4">
@@ -63,7 +66,7 @@ export default function HeroShowcase({ product, loading = false }) {
             {colorPalette.length > 0 && (
               <div className="flex items-center gap-2 text-xs text-white/70">
                 <span aria-hidden="true" className="hidden sm:inline">
-                  Palette
+                  {t('Palette')}
                 </span>
                 <div className="flex items-center gap-1.5">
                   {colorPalette.map((color) => (
@@ -81,7 +84,9 @@ export default function HeroShowcase({ product, loading = false }) {
           </div>
           {materials.length > 0 && (
             <p className="text-xs uppercase tracking-[0.3em] text-white/60">
-              Crafted in {materials.map((material) => formatTitleCase(material)).join(' • ')}
+              {t('hero.craftedIn', {
+                materials: materials.map((material) => formatTitleCase(material)).join(' • ')
+              })}
             </p>
           )}
           <div className="flex flex-wrap gap-3 pt-2">
@@ -89,14 +94,14 @@ export default function HeroShowcase({ product, loading = false }) {
               to={`/products/${product.id}`}
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-primary-100"
             >
-              Shop the look
+              {t('Shop the look')}
               <span aria-hidden="true">→</span>
             </Link>
             <Link
               to="/account"
               className="inline-flex items-center rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white/90 transition hover:border-white hover:text-white"
             >
-              Book a styling session
+              {t('Book a styling session')}
             </Link>
           </div>
         </div>
@@ -104,10 +109,10 @@ export default function HeroShowcase({ product, loading = false }) {
           {displayImage ? (
             <img src={displayImage} alt={product.name} className="h-full w-full object-cover" loading="lazy" />
           ) : (
-            <div className="grid h-96 place-items-center text-sm text-white/70">Editorial image coming soon</div>
+            <div className="grid h-96 place-items-center text-sm text-white/70">{t('Editorial image coming soon')}</div>
           )}
           <div className="absolute bottom-4 right-4 rounded-full bg-black/40 px-3 py-1 text-xs font-medium uppercase tracking-[0.3em] text-white/70 backdrop-blur">
-            {product.fit ? formatTitleCase(product.fit) : 'Limited release'}
+            {product.fit ? formatTitleCase(product.fit) : t('Limited release')}
           </div>
         </div>
       </div>

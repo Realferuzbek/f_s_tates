@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import apiClient from '../utils/apiClient.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const formatTitleCase = (value) => value.replace(/\b\w/g, (char) => char.toUpperCase());
 
@@ -11,6 +12,7 @@ export default function CheckoutPage() {
   const { items, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
   const { token } = useAuth();
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const {
     register,
@@ -47,10 +49,10 @@ export default function CheckoutPage() {
         }
       );
       clearCart();
-      navigate('/account/orders', { replace: true, state: { message: 'Order placed successfully!' } });
+      navigate('/account/orders', { replace: true, state: { message: t('checkout.success') } });
     } catch (error) {
       console.error('Failed to complete checkout', error);
-      alert('Checkout failed. Please try again.');
+      alert(t('checkout.failure'));
     } finally {
       setSubmitting(false);
     }
@@ -60,45 +62,45 @@ export default function CheckoutPage() {
     <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <section className="grid gap-6">
         <header>
-          <h1 className="text-2xl font-semibold text-slate-900">Checkout</h1>
-          <p className="mt-2 text-sm text-slate-600">Provide your shipping and payment information.</p>
+          <h1 className="text-2xl font-semibold text-slate-900">{t('Checkout')}</h1>
+          <p className="mt-2 text-sm text-slate-600">{t('Provide your shipping and payment information.')}</p>
         </header>
         <form className="grid gap-6 rounded-xl border border-slate-200 bg-white p-6" onSubmit={handleSubmit(onSubmit)}>
           <fieldset className="grid gap-4">
-            <legend className="text-lg font-semibold text-slate-900">Shipping address</legend>
+            <legend className="text-lg font-semibold text-slate-900">{t('Shipping address')}</legend>
             <label className="grid gap-1 text-sm">
-              <span className="font-medium text-slate-700">Full name</span>
+              <span className="font-medium text-slate-700">{t('Full name')}</span>
               <input
                 type="text"
-                {...register('fullName', { required: 'Your name is required' })}
+                {...register('fullName', { required: t('Your name is required') })}
                 className="rounded-md border border-slate-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
               />
               {errors.fullName && <span className="text-xs text-red-600">{errors.fullName.message}</span>}
             </label>
             <label className="grid gap-1 text-sm">
-              <span className="font-medium text-slate-700">Street address</span>
+              <span className="font-medium text-slate-700">{t('Street address')}</span>
               <input
                 type="text"
-                {...register('address', { required: 'Your address is required' })}
+                {...register('address', { required: t('Your address is required') })}
                 className="rounded-md border border-slate-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
               />
               {errors.address && <span className="text-xs text-red-600">{errors.address.message}</span>}
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1 text-sm">
-                <span className="font-medium text-slate-700">City</span>
+                <span className="font-medium text-slate-700">{t('City')}</span>
                 <input
                   type="text"
-                  {...register('city', { required: 'City is required' })}
+                  {...register('city', { required: t('City is required') })}
                   className="rounded-md border border-slate-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
                 />
                 {errors.city && <span className="text-xs text-red-600">{errors.city.message}</span>}
               </label>
               <label className="grid gap-1 text-sm">
-                <span className="font-medium text-slate-700">Postal code</span>
+                <span className="font-medium text-slate-700">{t('Postal code')}</span>
                 <input
                   type="text"
-                  {...register('postalCode', { required: 'Postal code is required' })}
+                  {...register('postalCode', { required: t('Postal code is required') })}
                   className="rounded-md border border-slate-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
                 />
                 {errors.postalCode && <span className="text-xs text-red-600">{errors.postalCode.message}</span>}
@@ -106,7 +108,7 @@ export default function CheckoutPage() {
             </div>
           </fieldset>
           <fieldset className="grid gap-4">
-            <legend className="text-lg font-semibold text-slate-900">Payment</legend>
+            <legend className="text-lg font-semibold text-slate-900">{t('Payment')}</legend>
             <label className="flex items-center gap-3 rounded-md border border-slate-200 p-3 text-sm">
               <input
                 type="radio"
@@ -115,8 +117,8 @@ export default function CheckoutPage() {
                 className="h-4 w-4 border-slate-300 text-primary-600 focus:ring-primary-600"
               />
               <div>
-                <p className="font-medium text-slate-800">Credit or debit card</p>
-                <p className="text-xs text-slate-500">Secured via Stripe test mode</p>
+                <p className="font-medium text-slate-800">{t('Credit or debit card')}</p>
+                <p className="text-xs text-slate-500">{t('Secured via Stripe test mode')}</p>
               </div>
             </label>
             <label className="flex items-center gap-3 rounded-md border border-slate-200 p-3 text-sm">
@@ -127,8 +129,8 @@ export default function CheckoutPage() {
                 className="h-4 w-4 border-slate-300 text-primary-600 focus:ring-primary-600"
               />
               <div>
-                <p className="font-medium text-slate-800">PayPal</p>
-                <p className="text-xs text-slate-500">Redirect to PayPal sandbox</p>
+                <p className="font-medium text-slate-800">{t('PayPal')}</p>
+                <p className="text-xs text-slate-500">{t('Redirect to PayPal sandbox')}</p>
               </div>
             </label>
           </fieldset>
@@ -137,22 +139,22 @@ export default function CheckoutPage() {
             disabled={submitting || items.length === 0}
             className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 disabled:cursor-not-allowed disabled:bg-slate-400"
           >
-            {submitting ? 'Processing…' : 'Place order'}
+            {submitting ? t('Processing...') : t('Place order')}
           </button>
         </form>
       </section>
       <aside className="grid gap-4 self-start rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-slate-900">Order summary</h2>
+        <h2 className="text-lg font-semibold text-slate-900">{t('Order summary')}</h2>
         <ul className="grid gap-3 text-sm text-slate-600">
           {items.map((item) => {
             const details = [];
             if (item.selectedSize) {
-              details.push(`Size ${item.selectedSize.toUpperCase()}`);
+              details.push(t('cart.sizeLabel', { size: item.selectedSize.toUpperCase() }));
             }
             if (item.selectedColor) {
               details.push(formatTitleCase(item.selectedColor));
             }
-            details.push(`Qty ${item.quantity}`);
+            details.push(t('cart.summaryQuantity', { count: item.quantity }));
             return (
               <li key={item.lineKey ?? item.product.id} className="flex items-center justify-between">
                 <div className="flex flex-col">
@@ -165,7 +167,7 @@ export default function CheckoutPage() {
           })}
         </ul>
         <div className="flex items-center justify-between text-base font-semibold text-slate-900">
-          <span>Total</span>
+          <span>{t('Total')}</span>
           <span>${cartTotal.toFixed(2)}</span>
         </div>
       </aside>

@@ -3,6 +3,7 @@ import { Bars3Icon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { MobileExperienceProvider } from '../context/MobileExperienceContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import useAnalytics from '../hooks/useAnalytics.js';
 import BrandIcon from './BrandIcon.jsx';
 import Seo from './Seo.jsx';
@@ -37,6 +38,7 @@ export default function Layout({ children }) {
   });
   const isMobile = useIsMobile();
   const trackEvent = useAnalytics();
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     setAvatarOpen(false);
@@ -178,8 +180,8 @@ export default function Layout({ children }) {
           <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="rounded-[32px] border border-white/70 bg-white/90 shadow-[0_15px_35px_rgba(15,23,42,0.12)]">
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-t-[32px] border-b border-white/40 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 px-4 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white sm:flex-nowrap">
-                <span className="text-[0.68rem] tracking-[0.22em]">Complimentary worldwide express shipping</span>
-                <span className="text-[0.65rem] font-medium tracking-[0.16em] text-white/80">Seasonal drop live now</span>
+                <span className="text-[0.68rem] tracking-[0.22em]">{t('Complimentary worldwide express shipping')}</span>
+                <span className="text-[0.65rem] font-medium tracking-[0.16em] text-white/80">{t('Seasonal drop live now')}</span>
               </div>
               <nav className="flex flex-wrap items-center gap-4 px-4 py-3 sm:px-6">
                 <div className="flex flex-1 items-center gap-2">
@@ -187,7 +189,7 @@ export default function Layout({ children }) {
                     <BrandIcon size={32} />
                     <span className="flex flex-col leading-tight">
                       <span className="text-lg tracking-[0.22em] text-slate-900">F•S TATES</span>
-                      <span className="text-[0.6rem] font-medium tracking-[0.18em] text-slate-400">Curated marketplace</span>
+                      <span className="text-[0.6rem] font-medium tracking-[0.18em] text-slate-400">{t('Curated marketplace')}</span>
                     </span>
                   </Link>
                 </div>
@@ -195,7 +197,7 @@ export default function Layout({ children }) {
                 <div className="hidden flex-1 items-center justify-end gap-5 sm:flex">
                   <button
                     type="button"
-                    aria-label="Chat with a stylist"
+                    aria-label={t('Chat with a stylist')}
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 text-slate-600 transition hover:border-primary-200 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
                   >
                     <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -210,7 +212,7 @@ export default function Layout({ children }) {
                           className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-700 shadow-sm transition hover:border-primary-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
                           aria-haspopup="menu"
                           aria-expanded={avatarOpen}
-                          aria-label="Open account menu"
+                          aria-label={t('Open account menu')}
                         >
                           <img
                             src="/associate-avatar.svg"
@@ -222,7 +224,7 @@ export default function Layout({ children }) {
                         {avatarOpen && (
                           <div className="absolute right-0 z-40 mt-3 w-52 rounded-2xl border border-slate-200 bg-white/95 p-4 text-sm shadow-2xl ring-1 ring-black/5">
                             <p className="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-slate-500">
-                              Quick actions
+                              {t('Quick actions')}
                             </p>
                             <div className="mt-3 space-y-2">
                               <Link
@@ -230,30 +232,30 @@ export default function Layout({ children }) {
                                 onClick={() => setAvatarOpen(false)}
                                 className="block rounded-xl px-2 py-1.5 text-slate-700 transition hover:bg-slate-100"
                               >
-                                My profile
+                                {t('My profile')}
                               </Link>
                               <Link
                                 to="/account/orders"
                                 onClick={() => setAvatarOpen(false)}
                                 className="block rounded-xl px-2 py-1.5 text-slate-700 transition hover:bg-slate-100"
                               >
-                                Orders
+                                {t('Orders')}
                               </Link>
                               <button
                                 type="button"
                                 className="flex w-full items-center justify-between rounded-xl px-2 py-1.5 text-left text-slate-500"
-                                aria-label="Saved items"
+                                aria-label={t('Saved items')}
                                 disabled
                               >
-                                Saved items
-                                <span className="text-[0.65rem] uppercase tracking-[0.25em]">Soon</span>
+                                {t('Saved items')}
+                                <span className="text-[0.65rem] uppercase tracking-[0.25em]">{t('Soon')}</span>
                               </button>
                               <button
                                 type="button"
                                 onClick={handleLogout}
                                 className="mt-1 block w-full rounded-xl bg-slate-900 px-2 py-1.5 text-center text-sm font-semibold text-white transition hover:bg-primary-600"
                               >
-                                Sign out
+                                {t('Sign out')}
                               </button>
                             </div>
                           </div>
@@ -263,7 +265,7 @@ export default function Layout({ children }) {
                         href="#marketplace"
                         className="rounded-full bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(15,23,42,0.25)] transition hover:scale-[1.01] hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
                       >
-                        Start shopping
+                        {t('Start shopping')}
                       </a>
                     </>
                   ) : (
@@ -272,13 +274,13 @@ export default function Layout({ children }) {
                         to="/auth"
                         className="rounded-full border border-slate-300/80 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-900 hover:text-slate-900"
                       >
-                        Sign in
+                        {t('Sign in')}
                       </Link>
                       <a
                         href="#marketplace"
                         className="rounded-full bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(15,23,42,0.25)] transition hover:scale-[1.01] hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
                       >
-                        Start shopping
+                        {t('Start shopping')}
                       </a>
                     </>
                   )}
@@ -286,7 +288,7 @@ export default function Layout({ children }) {
                 <button
                   className="inline-flex items-center justify-center rounded-md p-2 text-slate-700 sm:hidden"
                   onClick={() => setMobileOpen((open) => !open)}
-                  aria-label="Toggle navigation"
+                  aria-label={t('Toggle navigation')}
                 >
                   <Bars3Icon className="h-6 w-6" />
                 </button>
@@ -299,12 +301,12 @@ export default function Layout({ children }) {
                   <div className="flex flex-col gap-3 text-sm font-medium">
                     {user && (
                       <NavLink to="/account" className={navLinkClass} onClick={() => setMobileOpen(false)}>
-                        My account
+                        {t('My account')}
                       </NavLink>
                     )}
                     {user?.role === 'ADMIN' && (
                       <NavLink to="/admin" className={navLinkClass} onClick={() => setMobileOpen(false)}>
-                        Studio admin
+                        {t('Studio admin')}
                       </NavLink>
                     )}
                     {user ? (
@@ -315,7 +317,7 @@ export default function Layout({ children }) {
                         }}
                         className="rounded-full border border-slate-300/80 px-4 py-2 text-left text-sm font-semibold text-slate-700"
                       >
-                        Sign out
+                        {t('Sign out')}
                       </button>
                     ) : (
                       <Link
@@ -323,7 +325,7 @@ export default function Layout({ children }) {
                         onClick={() => setMobileOpen(false)}
                         className="rounded-full border border-slate-300/80 px-4 py-2 text-center text-sm font-semibold text-slate-700"
                       >
-                        Sign in
+                        {t('Sign in')}
                       </Link>
                     )}
                     <a
@@ -331,7 +333,7 @@ export default function Layout({ children }) {
                       onClick={() => setMobileOpen(false)}
                       className="rounded-full bg-slate-900 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-[0_12px_25px_rgba(15,23,42,0.22)]"
                     >
-                      Start shopping
+                      {t('Start shopping')}
                     </a>
                   </div>
                 </div>
@@ -343,54 +345,60 @@ export default function Layout({ children }) {
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{contentWithProvider}</div>
         </main>
         <footer className="mt-14 border-t border-slate-200/60 bg-gradient-to-b from-white/95 via-slate-50 to-slate-100/60 pt-12 pb-28 text-sm text-slate-500 md:pb-12">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:grid-cols-3 sm:px-6 lg:px-8">
+          <div
+            className={`mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:px-8 ${
+              isMobile ? 'sm:grid-cols-3 lg:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-2'
+            }`}
+          >
             <div>
               <div className="flex items-center gap-2">
                 <BrandIcon size={20} />
                 <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">F•S Tates</h3>
               </div>
               <p className="mt-3 text-base text-slate-600">
-                A curated marketplace spotlighting emerging ateliers, mindful craftsmanship, and elevated everyday pieces.
+                {t('A curated marketplace spotlighting emerging ateliers, mindful craftsmanship, and elevated everyday pieces.')}
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">Customer care</h4>
+              <h4 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">{t('Customer care')}</h4>
               <ul className="mt-3 space-y-3 text-base text-slate-600">
-                <li>Shipping &amp; returns</li>
-                <li>Size guide</li>
-                <li>Contact concierge</li>
-                <li>FAQ</li>
+                <li>{t('Shipping & returns')}</li>
+                <li>{t('Size guide')}</li>
+                <li>{t('Contact concierge')}</li>
+                <li>{t('FAQ')}</li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">Stay in the loop</h4>
+              <h4 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">{t('Stay in the loop')}</h4>
               <p className="mt-3 text-base text-slate-600">
-                Seasonal drops, live atelier sessions, and styling intel straight to your inbox.
+                {t('Seasonal drops, live atelier sessions, and styling intel straight to your inbox.')}
               </p>
-              <form className="mt-4 flex gap-3">
-                <label htmlFor="footer-email" className="sr-only">
-                  Email address
-                </label>
-                <input
-                  id="footer-email"
-                  type="email"
-                  placeholder="you@email.com"
-                  className="w-full flex-1 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
-                />
-                <button
-                  type="button"
-                  className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(15,23,42,0.22)] transition hover:bg-primary-600"
-                >
-                  Subscribe
-                </button>
-              </form>
+              {isMobile && (
+                <form className="mt-4 flex gap-3">
+                  <label htmlFor="footer-email" className="sr-only">
+                    {t('Email address')}
+                  </label>
+                  <input
+                    id="footer-email"
+                    type="email"
+                    placeholder={t('you@email.com')}
+                    className="w-full flex-1 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+                  />
+                  <button
+                    type="button"
+                    className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(15,23,42,0.22)] transition hover:bg-primary-600"
+                  >
+                    {t('Subscribe')}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
           <p className="mt-10 text-center text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} F-S Tates Marketplace. All rights reserved.
+            &copy; {new Date().getFullYear()} F-S Tates Marketplace. {t('All rights reserved.')}
           </p>
         </footer>
-        <AccessibilityWidget />
+        {isMobile && <AccessibilityWidget />}
       </div>
     </div>
   );

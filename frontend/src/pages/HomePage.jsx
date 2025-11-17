@@ -5,10 +5,12 @@ import ProductCarousel from '../components/ProductCarousel.jsx';
 import MarketplaceTable from '../components/MarketplaceTable.jsx';
 import { marketplaceCategories } from '../data/marketplaceCategories.js';
 import MobileMarketplacePanel from '../components/mobile/MobileMarketplacePanel.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 export default function HomePage() {
   const isMobile = useIsMobile();
   const { data: curated, loading: curatedLoading } = useCuratedProducts();
+  const { t } = useLanguage();
 
   if (isMobile) {
     return <MobileMarketplacePanel curatedData={curated} />;
@@ -26,23 +28,23 @@ export default function HomePage() {
 
       {!curatedLoading && curated.newArrivals.length > 0 && (
         <ProductCarousel
-          title="New this week"
-          subtitle="Fresh silhouettes hand-picked by our buyers."
+          title={t('New this week')}
+          subtitle={t('Fresh silhouettes hand-picked by our buyers.')}
           products={curated.newArrivals}
         />
       )}
       {!curatedLoading && curated.capsuleEdit.length > 0 && (
         <ProductCarousel
-          title="Capsule edit"
-          subtitle="Build your 10-piece wardrobe with mix-and-match icons."
+          title={t('Capsule edit')}
+          subtitle={t('Build your 10-piece wardrobe with mix-and-match icons.')}
           products={curated.capsuleEdit}
         />
       )}
 
       {!curatedLoading && curated.statementPieces.length > 0 && (
         <ProductCarousel
-          title="Statement pieces"
-          subtitle="Artisanal releases designed to turn heads at your next event."
+          title={t('Statement pieces')}
+          subtitle={t('Artisanal releases designed to turn heads at your next event.')}
           products={curated.statementPieces}
           accent="dark"
         />

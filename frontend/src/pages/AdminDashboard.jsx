@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../utils/apiClient.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const formatTitleCase = (value) => value.replace(/\b\w/g, (char) => char.toUpperCase());
 
@@ -8,6 +9,7 @@ export default function AdminDashboard() {
   const { token } = useAuth();
   const [metrics, setMetrics] = useState(null);
   const [products, setProducts] = useState([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     apiClient
@@ -24,38 +26,38 @@ export default function AdminDashboard() {
   return (
     <div className="grid gap-6">
       <header>
-        <h1 className="text-2xl font-semibold text-slate-900">Admin dashboard</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t('Admin dashboard')}</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Monitor store performance, manage inventory levels, and update product visibility.
+          {t('Monitor store performance, manage inventory levels, and update product visibility.')}
         </p>
       </header>
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <DashboardMetric title="Total revenue" value={metrics?.totalRevenue} prefix="$" />
-        <DashboardMetric title="Orders" value={metrics?.orders} />
-        <DashboardMetric title="Customers" value={metrics?.customers} />
-        <DashboardMetric title="Low inventory" value={metrics?.lowInventory} />
+        <DashboardMetric title={t('Total revenue')} value={metrics?.totalRevenue} prefix="$" />
+        <DashboardMetric title={t('Orders')} value={metrics?.orders} />
+        <DashboardMetric title={t('Customers')} value={metrics?.customers} />
+        <DashboardMetric title={t('Low inventory')} value={metrics?.lowInventory} />
       </section>
       <section className="grid gap-4 rounded-xl border border-slate-200 bg-white p-6">
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">Product catalog</h2>
-            <p className="text-sm text-slate-600">Quickly adjust inventory levels for fast-moving products.</p>
+            <h2 className="text-lg font-semibold text-slate-900">{t('Product catalog')}</h2>
+            <p className="text-sm text-slate-600">{t('Quickly adjust inventory levels for fast-moving products.')}</p>
           </div>
           <button className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:border-primary-300 hover:text-primary-600">
-            New product
+            {t('New product')}
           </button>
         </header>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
             <thead className="bg-slate-50 text-xs uppercase text-slate-500">
               <tr>
-                <th scope="col" className="px-4 py-3">Name</th>
-                <th scope="col" className="px-4 py-3">Category</th>
-                <th scope="col" className="px-4 py-3">Audience</th>
-                <th scope="col" className="px-4 py-3">Highlights</th>
-                <th scope="col" className="px-4 py-3">Price</th>
-                <th scope="col" className="px-4 py-3">Inventory</th>
-                <th scope="col" className="px-4 py-3">Status</th>
+                <th scope="col" className="px-4 py-3">{t('Name')}</th>
+                <th scope="col" className="px-4 py-3">{t('Category')}</th>
+                <th scope="col" className="px-4 py-3">{t('Audience')}</th>
+                <th scope="col" className="px-4 py-3">{t('Highlights')}</th>
+                <th scope="col" className="px-4 py-3">{t('Price')}</th>
+                <th scope="col" className="px-4 py-3">{t('Inventory')}</th>
+                <th scope="col" className="px-4 py-3">{t('Status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -81,7 +83,7 @@ export default function AdminDashboard() {
                           : 'bg-red-100 text-red-700'
                       }`}
                     >
-                      {product.inventory?.quantity > 0 ? 'Active' : 'Out of stock'}
+                      {product.inventory?.quantity > 0 ? t('Active') : t('Out of stock')}
                     </span>
                   </td>
                 </tr>

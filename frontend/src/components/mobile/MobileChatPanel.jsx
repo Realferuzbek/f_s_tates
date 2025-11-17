@@ -238,7 +238,7 @@ export default function MobileChatPanel({ isActive, focusThreadId, focusOrderId,
         </div>
         {threadsError && <p className="rounded-2xl border border-rose-200 bg-rose-50/60 px-3 py-2 text-sm text-rose-600">{threadsError}</p>}
         {loadingThreads && threads.length === 0 ? (
-          <p className="text-sm text-slate-500">Loading your threads…</p>
+          <p className="text-sm text-slate-500">Loading your threads...</p>
         ) : threads.length > 0 ? (
           <div className="space-y-3">
             {threads.map((thread) => (
@@ -316,7 +316,7 @@ export default function MobileChatPanel({ isActive, focusThreadId, focusOrderId,
       </header>
       {fetchingThread && !conversationDetail ? (
         <div className="rounded-[28px] border border-slate-200 bg-white/90 px-4 py-6 text-center text-sm text-slate-500">
-          Loading conversation…
+          Loading conversation...
         </div>
       ) : conversationDetail ? (
         <>

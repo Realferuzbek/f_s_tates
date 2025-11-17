@@ -71,7 +71,7 @@ export const marketplaceCategories = [
     filters: ['worldwide', 'live'],
     accentClass: 'from-emerald-50 via-white to-lime-50',
     Icon: GlobeAltIcon,
-    imageUrl: 'https://images.unsplash.com/photo-1528701800489-20be3cbe2522?auto=format&fit=crop&w=900&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=900&q=80'
   },
   {
     title: 'Tailored Tops',

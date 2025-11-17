@@ -1,6 +1,9 @@
 import ProductCard from './ProductCard.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 export default function ProductCarousel({ title, subtitle, products = [], accent = 'light' }) {
+  const { t } = useLanguage();
+
   if (!products || products.length === 0) {
     return null;
   }
@@ -17,9 +20,7 @@ export default function ProductCarousel({ title, subtitle, products = [], accent
           <p className="text-xs uppercase tracking-[0.4em] text-current/70">{title}</p>
           <h2 className="text-2xl font-semibold">{subtitle}</h2>
         </div>
-        <div className="text-sm text-current/60">
-          {products.length} piece{products.length === 1 ? '' : 's'} in this drop
-        </div>
+        <div className="text-sm text-current/60">{t('productCarousel.count', { count: products.length })}</div>
       </header>
       <div className="carousel-scroll flex gap-5 overflow-x-auto pb-2">
         {products.map((product) => (

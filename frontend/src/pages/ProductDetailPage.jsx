@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import apiClient from '../utils/apiClient.js';
 import { useCart } from '../context/CartContext.jsx';
 import { getColorSwatchClass } from '../utils/palette.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const formatTitleCase = (value) => value.replace(/\b\w/g, (char) => char.toUpperCase());
 
@@ -14,6 +15,7 @@ export default function ProductDetailPage() {
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const { addItem } = useCart();
+  const { t } = useLanguage();
 
   useEffect(() => {
     apiClient
@@ -42,7 +44,7 @@ export default function ProductDetailPage() {
   if (error) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50/80 p-6 text-sm text-red-700">
-        Unable to load this product. Please try again later.
+        {t('Unable to load this product. Please try again later.')}
       </div>
     );
   }
@@ -50,7 +52,7 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <div className="grid h-64 place-items-center rounded-2xl border border-dashed border-slate-300 bg-white/80">
-        <p className="text-sm text-slate-500">Loading product details…</p>
+        <p className="text-sm text-slate-500">{t('Loading product details...')}</p>
       </div>
     );
   }
@@ -64,14 +66,14 @@ export default function ProductDetailPage() {
     <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
       <section aria-labelledby="product-gallery" className="space-y-5">
         <h2 id="product-gallery" className="text-xs uppercase tracking-[0.3em] text-slate-400">
-          Lookbook
+          {t('Lookbook')}
         </h2>
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-xl">
           <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-slate-100">
             {selectedImage ? (
               <img src={selectedImage} alt={product.name} className="h-full w-full object-cover" loading="lazy" />
             ) : (
-              <div className="grid h-full place-items-center text-sm text-slate-500">Editorial image coming soon</div>
+              <div className="grid h-full place-items-center text-sm text-slate-500">{t('Editorial image coming soon')}</div>
             )}
           </div>
           {galleryImages.length > 1 && (
@@ -95,7 +97,7 @@ export default function ProductDetailPage() {
       <section aria-labelledby="product-info" className="space-y-8">
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.35em] text-primary-600">
-            {product.brand} • {formatTitleCase(product.category?.name ?? 'Limited')}
+            {product.brand} • {formatTitleCase(t(product.category?.name ?? 'Limited'))}
           </p>
           <h1 id="product-info" className="text-4xl font-semibold text-slate-900">
             {product.name}
@@ -120,7 +122,7 @@ export default function ProductDetailPage() {
           {requiresColor && (
             <fieldset className="space-y-3">
               <legend className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">
-                Colour palette
+                {t('Colour palette')}
               </legend>
               <div className="flex flex-wrap gap-2">
                 {product.colorOptions.map((color) => (
@@ -146,7 +148,7 @@ export default function ProductDetailPage() {
           )}
           {requiresSize && (
             <fieldset className="space-y-3">
-              <legend className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Size</legend>
+              <legend className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">{t('Size')}</legend>
               <div className="flex flex-wrap gap-2">
                 {product.sizeOptions.map((size) => (
                   <button
@@ -175,36 +177,36 @@ export default function ProductDetailPage() {
             disabled={disableCta}
             className="w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold uppercase tracking-[0.4em] text-white shadow-lg shadow-slate-900/25 transition hover:-translate-y-0.5 hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
-            {inventoryCount > 0 ? 'Add to bag' : 'Notify me'}
+            {inventoryCount > 0 ? t('Add to bag') : t('Notify me')}
           </button>
           <p className="text-xs text-slate-500">
-            Complimentary alterations and express international delivery included with every purchase.
+            {t('Complimentary alterations and express international delivery included with every purchase.')}
           </p>
         </div>
 
         <div className="grid gap-6 rounded-3xl border border-slate-200 bg-white/70 p-6 shadow">
           <div className="space-y-2">
-            <h2 className="text-lg font-semibold text-slate-900">The story</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{t('The story')}</h2>
             <p className="text-sm leading-relaxed text-slate-600">{product.description}</p>
           </div>
           <dl className="grid gap-4 text-sm text-slate-600 md:grid-cols-2">
             <div className="space-y-1">
-              <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">SKU</dt>
+              <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{t('SKU')}</dt>
               <dd>{product.sku}</dd>
             </div>
             <div className="space-y-1">
-              <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Audience</dt>
-              <dd>{formatTitleCase(product.audience ?? 'Unisex')}</dd>
+              <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{t('Audience')}</dt>
+              <dd>{formatTitleCase(t(product.audience ?? 'Unisex'))}</dd>
             </div>
             {product.fit && (
               <div className="space-y-1">
-                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Fit</dt>
+                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{t('Fit')}</dt>
                 <dd>{product.fit}</dd>
               </div>
             )}
             {product.style && (
               <div className="space-y-1">
-                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Capsule</dt>
+                <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{t('Capsule')}</dt>
                 <dd>{product.style}</dd>
               </div>
             )}
@@ -212,7 +214,7 @@ export default function ProductDetailPage() {
           <div className="grid gap-4 md:grid-cols-2">
             {product.materials?.length > 0 && (
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Materials</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{t('Materials')}</h3>
                 <ul className="mt-2 space-y-1">
                   {product.materials.map((material) => (
                     <li key={material} className="text-sm text-slate-600">
@@ -224,13 +226,13 @@ export default function ProductDetailPage() {
             )}
             {product.care && (
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Care</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{t('Care')}</h3>
                 <p className="mt-2 text-sm text-slate-600">{product.care}</p>
               </div>
             )}
           </div>
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Tags</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">{t('Tags')}</h3>
             <div className="mt-2 flex flex-wrap gap-2">
               {(product.tags ?? []).map((tag) => (
                 <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">

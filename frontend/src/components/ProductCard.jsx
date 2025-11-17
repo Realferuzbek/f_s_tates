@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { getColorSwatchClass } from '../utils/palette.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 function formatTitleCase(value) {
   return value.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -8,6 +9,7 @@ function formatTitleCase(value) {
 
 export default function ProductCard({ product, variant = 'default' }) {
   const { addItem } = useCart();
+  const { t } = useLanguage();
   const colors = (product.colorOptions ?? []).slice(0, 3);
   const badges = (product.badges ?? []).slice(0, 3);
   const onDark = variant === 'on-dark';
@@ -35,7 +37,7 @@ export default function ProductCard({ product, variant = 'default' }) {
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-slate-500">
-            Image coming soon
+            {t('Image coming soon')}
           </div>
         )}
         {badges.length > 0 && (
@@ -86,7 +88,7 @@ export default function ProductCard({ product, variant = 'default' }) {
           )}
           {inventoryCount !== undefined && (
             <span className={`text-xs uppercase tracking-[0.25em] ${onDark ? 'text-white/50' : 'text-slate-400'}`}>
-              {inventoryCount > 0 ? `${inventoryCount} in studio` : 'Waitlist'}
+              {inventoryCount > 0 ? t('cart.inStudio', { count: inventoryCount }) : t('Waitlist')}
             </span>
           )}
         </div>
@@ -102,7 +104,7 @@ export default function ProductCard({ product, variant = 'default' }) {
                 : 'bg-gradient-to-r from-primary-600 to-purple-600 text-white shadow-lg shadow-primary-600/30 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600'
             }`}
           >
-            Add to bag
+            {t('Add to bag')}
           </button>
         </div>
       </div>
