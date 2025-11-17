@@ -17,7 +17,7 @@ A full-stack fashion marketplace inspired by elevated online destinations. The e
 - Admin dashboard surfaces audience targeting and highlight badges alongside key revenue metrics.
 - Custom lightning badge (`frontend/public/brand-icon.svg`) keeps the storefront and browser chrome on-brand across navigation, hero moments, and metadata.
 
-## Project structure
+## Project structure!
 
 
 frontend/   # React single-page application powered by Vite and Tailwind
