@@ -1,125 +1,121 @@
-# F-S Tates Marketplace
+# F·S Tates — Curated clothing marketplace (full-stack MVP prototype)
 
-A full-stack fashion marketplace inspired by elevated online destinations. The experience combines a modern React frontend with an Express + Prisma backend to deliver immersive lookbooks, rich product storytelling, size/colour aware carts, and a curated shopping flow that feels at home beside premium platforms such as Uzum Market, Alibaba, and Temu.
+A product + engineering prototype for a curated fashion marketplace: browse a catalog, filter/search products, manage a cart, and place orders — designed for a cross-border sourcing workflow.
 
-## Tech stack
+**Status:** In progress. Demo is functional; some production features (payments, fulfillment, content ops) are intentionally not complete.
 
-- **Frontend:** React 18, Vite, React Router, Tailwind CSS with custom gradients and editorial UI patterns
-- **Backend:** Node.js, Express, Prisma ORM, JSON Web Tokens
-- **Database:** PostgreSQL (development seed + fashion-focused schema)
+---
 
-## Feature highlights
+## Demo
 
-- Editorial home with featured hero drop, capsule edits, and horizontal product spotlights.
-- Dynamic catalogue filtering across category, audience, brand, colour palettes, size sets, highlights, and price.
-- Detailed product pages with rich galleries, material breakouts, care notes, and required size/colour selection.
-- Cart, checkout, and order history now track selected variants so fulfilment always reflects guest choices.
-- Admin dashboard surfaces audience targeting and highlight badges alongside key revenue metrics.
-- Custom lightning badge (`frontend/public/brand-icon.svg`) keeps the storefront and browser chrome on-brand across navigation, hero moments, and metadata.
+- Frontend (Vercel): https://fstates.vercel.app/
+- Backend API (Render): https://f-s-tates.onrender.com  
+  Note: Render free instances can sleep; first request may be slow.
 
-## Project structure!
+## Screenshots / Video
 
+> Add screenshots to `docs/screenshots/` and link them here.
+- `docs/screenshots/home.png` (TBD)
+- `docs/screenshots/category.png` (TBD)
+- `docs/screenshots/product.png` (TBD)
+- `docs/screenshots/cart-checkout.png` (TBD)
 
-frontend/   # React single-page application powered by Vite and Tailwind
-backend/    # Express API with Prisma models, authentication, and business logic
-```
+---
 
-## Getting started
+## Features
 
-### Prerequisites
+- Curated catalog UI with categories and product detail pages
+- Search + filters (query, brand, price range) backed by API
+- Authentication flow (register / login) with protected routes
+- Cart operations (add/update/remove items)
+- Checkout flow that captures shipping details and payment method selection (no real payment processing)
+- Orders: create orders and view order history
+- Admin routes for product/inventory/user management (foundation for internal ops)
+- Analytics endpoints for basic reporting (foundation for dashboards)
+- Chat endpoints (foundation for a concierge/agent experience)
+- PostgreSQL data model via Prisma (users, products, inventory, cart, orders, messages, events)
 
-- Node.js 18+
-- npm 9+
-- PostgreSQL 13+ (or a compatible managed instance)
+---
 
-### 1. Clone and install dependencies
+## Tech Stack
 
-```bash
-npm install --prefix frontend
-npm install --prefix backend
-```
+**Frontend**
+- React + Vite
+- Tailwind CSS
+- React Router
+- Framer Motion
+- Font Awesome
 
-### 2. Configure environment variables
+**Backend**
+- Node.js + Express
+- Prisma ORM
+- PostgreSQL
+- JWT auth + bcrypt password hashing
+- Zod validation
+- CORS + cookie parsing
 
-1. Copy the sample backend environment file and update the values:
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
-2. Ensure the `DATABASE_URL` points to a reachable PostgreSQL instance and the `JWT_SECRET` is a strong random value.
+**Hosting**
+- Vercel (frontend)
+- Render (backend)
 
-### 3. Apply migrations and seed sample data
+---
 
-This release expands the Prisma schema with fashion-specific fields (audience, colour and size options, hero imagery, product badges, and cart/order variant tracking). Apply the migration before seeding:
+## How It Works (high level)
 
-```bash
-npm run prisma:migrate --prefix backend
-npm run prisma:seed --prefix backend
-```
+1. The React SPA (Vercel) renders catalog, product, cart, and account views.
+2. The SPA calls the Express API (Render) for auth, products, cart, and orders.
+3. The API uses Prisma to read/write PostgreSQL records (catalog, inventory, carts, orders, messages).
+4. Auth uses JWTs (cookie/session style) and protects cart/order/admin routes.
+5. Search and filtering are performed server-side and returned as JSON to the UI.
 
-The seed script provisions:
-- An administrator account `admin@fstates.dev` / `password123`
-- A sample customer `customer@fstates.dev` / `password123`
-- Womenswear, menswear, kids, footwear, and accessories categories stocked with limited-run garments
-- Rich product metadata including colour palettes, size ladders, materials, and editorial badges used across the UI
+---
 
-### 4. Start the development servers
+## Evidence / Results
 
-Run the API and frontend in separate terminals:
+- Public demo deployed on Vercel: https://fstates.vercel.app/
+- Backend API deployed on Render: https://f-s-tates.onrender.com
+- Database schema includes **15 Prisma models** (User, Product, Inventory, Cart, Order, Message, etc.) in `backend/prisma/schema.prisma`.
+- API includes real filtering logic for products (query, brand, price range) in backend controllers.
 
-```bash
-npm run dev --prefix backend
-npm run dev --prefix frontend
-```
+**TBD metrics to collect (recommended before applications)**
+- Lighthouse scores (Performance/Accessibility/Best Practices/SEO)
+- API response time (p50/p95) for `/products` and `/orders`
+- Error rate and cold-start impact (Render sleep/wake)
+- Basic test coverage (unit/integration)
 
-The Vite dev server proxies `/api` requests to the Express API on port `4000` by default.
+---
 
-### 5. Build for production
+## My Role & Contributions
 
-```bash
-npm run build --prefix frontend
-```
+**Role:** Product owner + full-stack builder (solo engineering; business workflow informed by cross-border sourcing constraints).
 
-Package the backend for deployment by installing dependencies with `npm install --production --prefix backend` and starting with `npm start --prefix backend`.
+**What I built**
+- Defined the product scope: curated marketplace focused on clothing
+- Implemented the frontend SPA (routing, pages, UI, API wiring)
+- Designed the database schema in Prisma and implemented core API routes:
+  - auth, products/categories, cart, orders, inventory, admin, analytics, chat
+- Set up deployments (frontend on Vercel; backend on Render)
 
-## API overview
+---
 
-| Endpoint | Description |
-| --- | --- |
-| `POST /api/auth/register` | Create a new customer account |
-| `POST /api/auth/login` | Authenticate and receive a JWT |
-| `GET /api/products` | Browse products with full-text, category, audience, brand, colour (`colors`), size (`sizes`), badge, price, and sort filters |
-| `GET /api/products/curated` | Fetch hero, new arrivals, capsule edit, and statement piece groupings for the home experience |
-| `GET /api/products/:id` | Fetch detailed product information including gallery, materials, care, and variant options |
-| `GET/PUT /api/cart` | Retrieve or replace the authenticated user’s cart (now variant-aware) |
-| `POST /api/orders/checkout` | Place an order from the current cart, persisting selected size/colour variants |
-| `GET /api/orders` | View authenticated order history with variant details |
-| `GET /api/admin/metrics` | Admin-only dashboard metrics and catalog snapshot |
+## Roadmap
 
-All authenticated routes require an `Authorization: Bearer <token>` header using the JWT returned from the login endpoint.
+- Connect “concierge” experience to AI agents for product discovery and customer support
+- Add real payment processing (provider TBD) and order state machine (paid → packed → shipped → delivered)
+- Add upload/moderation pipeline for product media + content ops tooling
+- Harden security: rate limiting, stricter CORS, audit logs, admin RBAC
+- Add automated tests (API integration + frontend smoke tests) and CI
+- Improve internationalization (currency/locale) and shipping rules
 
-## SEO & Indexing
+---
 
-- `frontend/public/robots.txt` and `frontend/public/sitemap.xml` are generated at build time by `node frontend/scripts/build-seo.mjs`. Run `npm run sitemap --prefix frontend` locally whenever routes change, or rely on the `postbuild` hook that Vercel executes automatically.
-- Set `VITE_SITE_URL` (and optionally `VITE_API_BASE_URL` so product detail URLs are fetched from your backend) in the Vercel environment. The script uses these values to form absolute `<loc>` URLs and to link to `Sitemap: https://your-domain/sitemap.xml`.
-- The reusable `<Seo />` component at `frontend/src/components/Seo.jsx` centralizes default `<title>`, description, robots, canonical, Open Graph, and Twitter tags. It consumes `VITE_SITE_URL` for canonical links and social preview URLs.
-- Each page already inherits `<Seo />` via `Layout`. To override metadata per route, import `Seo` directly in that page and render it with custom props (e.g., `<Seo title="New Drop" description="..." image="/social/new-drop.jpg" />`).
+## License
 
-## Accessibility and UX notes
+License is currently **not specified**. If you plan to open-source or accept external contributions, add a license file (e.g., MIT).
 
-- Semantic HTML landmarks, focus-visible styles, and aria labels ensure the UI is screen reader friendly.
-- The Tailwind-based design system provides consistent spacing, typography, and responsive breakpoints down to small screens.
-- Form elements leverage `@tailwindcss/forms` for improved keyboard and assistive technology support.
+---
 
-## Deployment notes
+## Contact
 
-- Configure environment variables (`DATABASE_URL`, `JWT_SECRET`, `PORT`) on the target platform.
-- Run `npm run prisma:generate --prefix backend` during your build step to ensure Prisma client is compiled.
-- Serve the frontend static build (`frontend/dist`) via your preferred CDN or static host and proxy API requests to the Express server.
-- When deploying to Vercel, include the provided `vercel.json` and root `package.json`. They instruct Vercel to install from `frontend/`, emit the Vite build into `frontend/dist`, and serve it as a single-page app by first checking for static assets (via `{"handle":"filesystem"}`) and then falling back to `index.html`. Set `VITE_API_BASE_URL` in your Vercel environment variables so the client knows where to reach the running backend (e.g., `https://your-backend-host.com/api`).
-- For Render (or any Node host running the backend directly), just point the service root to `backend/`, keep the build command as `npm install`, and leave the start command as `npm start`. The backend `postinstall` hook now calls `npm run prisma:generate` and the Prisma CLI ships in production dependencies, so the generated client exists before the server boots.
-
-## Further improvements
-
-- Layer in live inventory feeds and atelier availability to keep quantities up to the minute.
-- Integrate payment gateways and transactional communications for production readiness.
-- Expand the admin studio with product creation, curation tools, and editorial scheduling.
+Feruzbek Qurbonov  
+GitHub: https://github.com/Realferuzbek
