@@ -1,121 +1,243 @@
-# F·S Tates — Curated clothing marketplace (full-stack MVP prototype)
+# F-S Tates Marketplace
 
-A product + engineering prototype for a curated fashion marketplace: browse a catalog, filter/search products, manage a cart, and place orders — designed for a cross-border sourcing workflow.
+A full-stack **fashion marketplace prototype** built as:
+- a **Vite + React** storefront (client),
+- a **Node.js + Express + Prisma** API (server),
+- and a **Postgres** database.
 
-**Status:** In progress. Demo is functional; some production features (payments, fulfillment, content ops) are intentionally not complete.
+Live demo: https://fstates.vercel.app
 
----
-
-## Demo
-
-- Frontend (Vercel): https://fstates.vercel.app/
-- Backend API (Render): https://f-s-tates.onrender.com  
-  Note: Render free instances can sleep; first request may be slow.
-
-## Screenshots / Video
-
-> Add screenshots to `docs/screenshots/` and link them here.
-- `docs/screenshots/home.png` (TBD)
-- `docs/screenshots/category.png` (TBD)
-- `docs/screenshots/product.png` (TBD)
-- `docs/screenshots/cart-checkout.png` (TBD)
+> Transparency: this repo is a **prototype**. It includes seeded demo data for local development, but demo credentials are intentionally not documented here.
 
 ---
 
-## Features
+## What this repo contains (code-backed)
 
-- Curated catalog UI with categories and product detail pages
-- Search + filters (query, brand, price range) backed by API
-- Authentication flow (register / login) with protected routes
-- Cart operations (add/update/remove items)
-- Checkout flow that captures shipping details and payment method selection (no real payment processing)
-- Orders: create orders and view order history
-- Admin routes for product/inventory/user management (foundation for internal ops)
-- Analytics endpoints for basic reporting (foundation for dashboards)
-- Chat endpoints (foundation for a concierge/agent experience)
-- PostgreSQL data model via Prisma (users, products, inventory, cart, orders, messages, events)
+### Customer storefront (React)
+- Product discovery (list + search + filters)
+- Category landing pages (`/category/:slug`)
+- Product details (`/products/:productId`)
+- Cart + checkout flow
+- Account pages + orders history (authenticated)
+- Multi-language UI (translations present for **EN / RU / UZ**)
+
+### Admin surface (React)
+- Admin dashboard route: `/admin` (guarded by role: `ADMIN`)
+- Admin metrics + low-inventory visibility (driven by backend `/api/admin/metrics`)
+- Admin support messaging (backend admin chat endpoints)
+
+### Backend API (Express + Prisma)
+- JWT auth (Bearer token)
+- Products + categories + curated products endpoints
+- Cart persistence + checkout creating orders
+- Account management:
+  - addresses
+  - payment methods (stored records; no gateway integration in code)
+  - preferences
+  - password change
+- Chat system:
+  - user support threads
+  - admin thread list + admin replies
+  - order-linked conversations bootstrapped during checkout
+- Analytics/event tracking endpoint (`/api/track`) storing events in DB
 
 ---
 
-## Tech Stack
+## Tech stack
 
 **Frontend**
-- React + Vite
-- Tailwind CSS
-- React Router
-- Framer Motion
-- Font Awesome
+- React 18, Vite, React Router
+- axios API client
+- react-helmet-async for SEO/meta
+- TailwindCSS + Headless UI + Heroicons
+- react-hook-form
 
 **Backend**
-- Node.js + Express
-- Prisma ORM
-- PostgreSQL
-- JWT auth + bcrypt password hashing
-- Zod validation
-- CORS + cookie parsing
-
-**Hosting**
-- Vercel (frontend)
-- Render (backend)
+- Node.js (ESM), Express
+- Prisma ORM + Postgres
+- JWT auth (`Authorization: Bearer <token>`)
+- zod validation
+- bcrypt password hashing
 
 ---
 
-## How It Works (high level)
+## Local development
 
-1. The React SPA (Vercel) renders catalog, product, cart, and account views.
-2. The SPA calls the Express API (Render) for auth, products, cart, and orders.
-3. The API uses Prisma to read/write PostgreSQL records (catalog, inventory, carts, orders, messages).
-4. Auth uses JWTs (cookie/session style) and protects cart/order/admin routes.
-5. Search and filtering are performed server-side and returned as JSON to the UI.
+### 0) Prerequisites
+- Postgres running locally (or a hosted Postgres URL)
+- Node.js + npm
 
 ---
 
-## Evidence / Results
+### 1) Backend (API) — runs on port **4000**
+```bash
+cd backend
+npm install
 
-- Public demo deployed on Vercel: https://fstates.vercel.app/
-- Backend API deployed on Render: https://f-s-tates.onrender.com
-- Database schema includes **15 Prisma models** (User, Product, Inventory, Cart, Order, Message, etc.) in `backend/prisma/schema.prisma`.
-- API includes real filtering logic for products (query, brand, price range) in backend controllers.
+# Configure env
+cp .env.example .env
+# Edit DATABASE_URL + JWT_SECRET (and optionally PORT)
 
-**TBD metrics to collect (recommended before applications)**
-- Lighthouse scores (Performance/Accessibility/Best Practices/SEO)
-- API response time (p50/p95) for `/products` and `/orders`
-- Error rate and cold-start impact (Render sleep/wake)
-- Basic test coverage (unit/integration)
+# Generate Prisma client
+npm run prisma:generate
+
+# Sync schema to database (no migrations folder included in this repo)
+npm run db:push
+
+# Seed demo data (creates demo users/products/categories)
+npm run seed
+
+# Start dev server
+npm run dev
+```
+
+Backend base URL:
+- `http://localhost:4000`
+- API prefix: `http://localhost:4000/api`
 
 ---
 
-## My Role & Contributions
+### 2) Frontend (Web) — runs on port **5173**
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-**Role:** Product owner + full-stack builder (solo engineering; business workflow informed by cross-border sourcing constraints).
+Frontend URL:
+- `http://localhost:5173`
 
-**What I built**
-- Defined the product scope: curated marketplace focused on clothing
-- Implemented the frontend SPA (routing, pages, UI, API wiring)
-- Designed the database schema in Prisma and implemented core API routes:
-  - auth, products/categories, cart, orders, inventory, admin, analytics, chat
-- Set up deployments (frontend on Vercel; backend on Render)
+Dev proxy (code-backed):
+- Frontend proxies `/api/*` → `http://localhost:4000/api/*` via `vite.config.js`
 
 ---
 
-## Roadmap
+## Configuration
 
-- Connect “concierge” experience to AI agents for product discovery and customer support
-- Add real payment processing (provider TBD) and order state machine (paid → packed → shipped → delivered)
-- Add upload/moderation pipeline for product media + content ops tooling
-- Harden security: rate limiting, stricter CORS, audit logs, admin RBAC
-- Add automated tests (API integration + frontend smoke tests) and CI
-- Improve internationalization (currency/locale) and shipping rules
+### Backend environment variables (exactly from `backend/.env.example`)
+- `DATABASE_URL` (Postgres connection string)
+- `JWT_SECRET` (used to sign/verify JWTs)
+- `PORT` (defaults to 4000)
+
+### Frontend build/runtime variables (used in code)
+These are optional and environment-specific:
+
+- `VITE_API_BASE_URL`
+  - Used as the API base URL in `src/utils/apiClient.js`
+  - If not set, frontend defaults to `/api` (works with the dev proxy)
+
+- `VITE_SITE_URL`
+  - Used for canonical URLs/SEO generation
+  - Falls back to `https://fstates.vercel.app` if not set
+
+Runtime override option:
+- `window.__APP_API_BASE_URL` (if injected before app init, it overrides API base URL)
+
+---
+
+## API overview (routes present in code)
+
+### Auth
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET  /api/auth/me`
+
+### Products
+- `GET /api/products`
+- `GET /api/products/curated`
+- `GET /api/products/categories`
+- `GET /api/products/:productId`
+
+### Cart + Orders
+- `GET  /api/cart`
+- `PUT  /api/cart`
+- `GET  /api/orders`
+- `POST /api/orders/checkout`
+
+### Account
+- `GET    /api/account/me`
+- `PUT    /api/account/me`
+- `GET    /api/account/orders`
+- `GET    /api/account/orders/:id`
+- `GET    /api/account/addresses`
+- `POST   /api/account/addresses`
+- `PUT    /api/account/addresses/:id`
+- `DELETE /api/account/addresses/:id`
+- `GET    /api/account/payment-methods`
+- `POST   /api/account/payment-methods`
+- `DELETE /api/account/payment-methods/:id`
+- `GET    /api/account/preferences`
+- `PUT    /api/account/preferences`
+- `POST   /api/account/change-password`
+
+### Chat (customer + admin)
+Customer:
+- `GET  /api/chat/threads`
+- `GET  /api/chat/threads/:id`
+- `POST /api/chat/threads/:id/messages`
+- `POST /api/chat/threads/:id/read`
+
+Admin:
+- `GET  /api/admin/chat/threads`
+- `POST /api/admin/chat/threads/:id/messages`
+- `POST /api/admin/chat/threads/:id/read`
+
+### Admin metrics
+- `GET /api/admin/metrics`
+
+### Analytics
+- `POST /api/track`
+
+---
+
+## Database schema (Prisma models present in code)
+
+Core commerce:
+- `User`, `Category`, `Product`, `Inventory`
+- `Cart`, `CartItem`
+- `Order`, `OrderItem`
+- `Address`, `PaymentInstrument`
+
+Experience:
+- `NotificationPreference`, `ProfileSetting`
+- `Conversation`, `Message` (support + order-linked messages)
+- `Event` (analytics tracking)
+
+Enums present in schema:
+- Roles (`CUSTOMER`, `ADMIN`)
+- Order statuses, payment method types, chat sender types, message kinds, audience
+
+---
+
+## SEO + sitemap generation (frontend build step)
+
+Frontend build runs a SEO generator:
+- `npm run build` triggers `postbuild` → `node ./scripts/build-seo.mjs`
+- Generates:
+  - `public/sitemap.xml` and `public/robots.txt`
+  - also writes to `dist/` when present
+
+Dynamic product routes in the sitemap:
+- If `VITE_API_BASE_URL` is set during build, the script attempts to fetch products from `${VITE_API_BASE_URL}/products` and adds `/products/:id` routes.
+- If not reachable, it safely skips dynamic product routes.
+
+Robots rules (code-backed):
+- Disallows indexing `/admin`, `/account`, `/account/orders`, `/checkout`
+
+---
+
+## My role & contributions
+
+I owned the product direction and system integration:
+- defined the marketplace scope and UX flows (storefront → cart → checkout → account)
+- connected a React storefront to a Prisma-backed API design (auth, cart, orders, admin)
+- added admin operations (metrics + support messaging) and event tracking
+- handled environment/deployment setup and iterative debugging
+
+Implementation was accelerated with AI-assisted development tools; I owned the architecture decisions, integration work, and shipping.
 
 ---
 
 ## License
 
-License is currently **not specified**. If you plan to open-source or accept external contributions, add a license file (e.g., MIT).
-
----
-
-## Contact
-
-Feruzbek Qurbonov  
-GitHub: https://github.com/Realferuzbek
+No explicit license file is included in this repo. Add one if you want reuse permissions to be explicit.
